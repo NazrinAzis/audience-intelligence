@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@14:*)",
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(npx next:*)",
+      "Skill(claude-developer-platform)",
+      "Bash(npx tsx:*)",
+      "Bash(npm run:*)",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(lsof:*)",
+      "Bash(rm:*)",
+      "Bash(netstat -ano)",
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(\"C:/Users/User/AppData/Local/Programs/Python/Python311/python.exe\":*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(ls .env*:*)",
+      "Bash(xargs grep:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
