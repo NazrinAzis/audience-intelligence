@@ -244,7 +244,7 @@ function BehavioralSection({
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* MAU Card */}
         <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
-          <div className="text-xs text-nz-text-muted mb-1">Monthly Active Users</div>
+          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by GPME individual user data." /></div>
           <div className="text-2xl font-bold text-nz-text">{formatNumber(data.mau)}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Total deduplicated MAU for games matching this segment
@@ -272,7 +272,7 @@ function BehavioralSection({
 
         {/* Avg Monthly Playtime Card */}
         <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
-          <div className="text-xs text-nz-text-muted mb-1">Avg. Monthly Playtime (Hours)</div>
+          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Avg. Monthly Playtime (Hours)<InfoTooltip text="Average hours per month spent playing games that fit this segment's profile. Segment figure vs. platform average shown for context." /></div>
           <div className="text-2xl font-bold text-nz-text">{data.avgMonthlyPlaytime}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Hours spent on games fitting this segment, on average
@@ -308,7 +308,7 @@ function BehavioralSection({
 
         {/* Playtime Distribution Card */}
         <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
-          <div className="text-xs text-nz-text-muted mb-3">Playtime Distribution</div>
+          <div className="text-xs text-nz-text-muted mb-3 flex items-center">Playtime Distribution<InfoTooltip text="Share of this segment's players who play more than 1hr / 5hrs / 10hrs / 25hrs / 50hrs per month. Grey = share of total panel. Green = share of this segment." /></div>
           <div className="space-y-1.5">
             {data.playtimeDistribution.map((row) => (
               <div key={row.bucket} className="flex items-center gap-2">
@@ -345,8 +345,9 @@ function BehavioralSection({
       {/* Row 2: Taxonomies that resonate - 5 column grid */}
       <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
         <div className="flex items-center justify-between mb-1">
-          <h4 className="text-sm font-semibold text-nz-text">
+          <h4 className="text-sm font-semibold text-nz-text flex items-center">
             Taxonomies that resonate with your Segment
+            <InfoTooltip text="Top Genres, Sub-Genres, Game Mechanics, Art Styles, and Themes ranked by MAU among players in this segment. Use this to understand what this audience gravitates toward beyond your title." />
           </h4>
         </div>
         <p className="text-xs text-nz-text-muted mb-4">
@@ -751,7 +752,7 @@ function ConversionFunnel({ segId, segColor }: { segId: string; segColor: string
     <>
       <SectionHeader
         title="Conversion Funnel"
-        tooltip="Shows how many players in this segment converted to adopters. Use this to understand your segment's addressable opportunity and current penetration."
+        tooltip="Shows how many players in this segment converted to adopters. Use this to understand your segment&#39;s addressable opportunity and current penetration."
       />
 
       <div className="bg-white rounded-lg border border-nz-border p-6 mb-6 shadow-sm">
@@ -863,13 +864,22 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
 
       {/* Region breakdown table */}
       <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
-        <h3 className="text-sm font-semibold text-nz-text mb-4">Region Breakdown</h3>
+        <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
+          Top Markets by Monthly Active Users
+          <InfoTooltip text="Regions ranked by the number of monthly active users within this segment's addressable market. Powered by GPME regional data. Use this to prioritise which markets to activate first in your media plan." />
+        </h3>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-nz-border">
-              <th className="text-left py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">Region</th>
-              <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">Addressable</th>
-              <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">Adopters</th>
+              <th className="text-left py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">
+                <span className="flex items-center">Region<InfoTooltip text="Geographic region as defined by Newzoo's standard market taxonomy." /></span>
+              </th>
+              <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">
+                <span className="flex items-center justify-end">MAU<InfoTooltip text="Monthly Active Users — the estimated number of players in this segment who are active in this region each month." /></span>
+              </th>
+              <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">
+                <span className="flex items-center justify-end">% of Segment<InfoTooltip text="This region's MAU as a share of the segment's total addressable market across all regions." /></span>
+              </th>
               <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">
                 Conv. Rate
                 <InfoTooltip text="Conversion rate = adopters ÷ addressable in this region. Higher means your game resonates more with this segment in this market." />
@@ -929,7 +939,7 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
         <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
           <div className="flex items-center gap-1 mb-4">
             <h3 className="text-sm font-semibold text-nz-text">Addressable Market by Region</h3>
-            <InfoTooltip text="Total players in this region who behaviorally match this segment" />
+            <InfoTooltip text="Absolute addressable market size per region in this segment. Use alongside % of Segment to compare both relative and absolute opportunity across markets." />
           </div>
           <div style={{ height: 250 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -1020,8 +1030,9 @@ function PriorBehaviorSubTab({
       <div className="grid grid-cols-2 gap-5 mb-5">
         {/* Chart 1: Top Games Played — uses segment color */}
         <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
-          <h3 className="text-sm font-semibold text-nz-text mb-4">
+          <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
             Top Games Played in 30 Days Before Adoption
+            <InfoTooltip text="Games most commonly played by this segment in the 30 days before they adopted titles in this category. Use this to identify cross-promotion partners and media targeting opportunities." />
           </h3>
           <div style={{ height: 500 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -1054,8 +1065,9 @@ function PriorBehaviorSubTab({
 
         {/* Chart 2: Overlap Index 30-Day — purple */}
         <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
-          <h3 className="text-sm font-semibold text-nz-text mb-4">
-            Overlap Index — 30 Day Prior Window (Top 30)
+          <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
+            Overlap Index &mdash; 30 Day Prior Window (Top 30)
+            <InfoTooltip text="Measures how much more likely players in this segment are to have played each title in the 30 days before adoption, compared to the general panel. A score of 40 means 40x more likely." />
           </h3>
           <div style={{ height: 500 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -1090,8 +1102,9 @@ function PriorBehaviorSubTab({
 
       {/* Chart 3: Overlap Index Lifetime — different shade */}
       <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
-        <h3 className="text-sm font-semibold text-nz-text mb-4">
-          Overlap Index — Lifetime
+        <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
+          Overlap Index &mdash; Lifetime
+          <InfoTooltip text="Same as the 30-day overlap index but across the player's full lifetime history. Useful for identifying deeper genre and franchise affinities beyond the pre-adoption window." />
         </h3>
         <div style={{ height: 600 }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -1154,7 +1167,7 @@ function GeneratedBehavioralSection({
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* MAU Card */}
         <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
-          <div className="text-xs text-nz-text-muted mb-1">Monthly Active Users</div>
+          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by GPME individual user data." /></div>
           <div className="text-2xl font-bold text-nz-text">{formatNumber(profile.mau)}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Total deduplicated MAU for games matching this segment
@@ -1171,7 +1184,7 @@ function GeneratedBehavioralSection({
 
         {/* Avg Monthly Playtime Card */}
         <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
-          <div className="text-xs text-nz-text-muted mb-1">Avg. Monthly Playtime (Hours)</div>
+          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Avg. Monthly Playtime (Hours)<InfoTooltip text="Average hours per month spent playing games that fit this segment's profile. Segment figure vs. platform average shown for context." /></div>
           <div className="text-2xl font-bold text-nz-text">{profile.avgMonthlyPlaytime}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Hours spent on games fitting this segment, on average
@@ -1201,7 +1214,7 @@ function GeneratedBehavioralSection({
 
         {/* Playtime Distribution Card */}
         <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
-          <div className="text-xs text-nz-text-muted mb-3">Playtime Distribution</div>
+          <div className="text-xs text-nz-text-muted mb-3 flex items-center">Playtime Distribution<InfoTooltip text="Share of this segment's players who play more than 1hr / 5hrs / 10hrs / 25hrs / 50hrs per month. Grey = share of total panel. Green = share of this segment." /></div>
           <div className="space-y-1.5">
             {profile.playtimeDistribution.map((row) => (
               <div key={row.bucket} className="flex items-center gap-2">
@@ -1229,7 +1242,10 @@ function GeneratedBehavioralSection({
 
       {/* Taxonomies */}
       <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
-        <h4 className="text-sm font-semibold text-nz-text mb-1">Taxonomies that resonate with your Segment</h4>
+        <h4 className="text-sm font-semibold text-nz-text mb-1 flex items-center">
+          Taxonomies that resonate with your Segment
+          <InfoTooltip text="Top Genres, Sub-Genres, Game Mechanics, Art Styles, and Themes ranked by MAU among players in this segment. Use this to understand what this audience gravitates toward beyond your title." />
+        </h4>
         <p className="text-xs text-nz-text-muted mb-4">Ranked on MAU</p>
         <div className="grid grid-cols-5 gap-4">
           {taxCategories.map((cat) => {
@@ -1270,7 +1286,7 @@ function GeneratedDemographicSection({
       <div className="grid grid-cols-2 gap-5 mb-6">
         {/* Age */}
         <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Age Distribution</div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Age Distribution<InfoTooltip text="Lifetime age breakdown of players in this segment based on GHT survey data. Does not change by month." /></div>
           <div className="flex items-end gap-2 h-32">
             {profile.age.map((a, i) => {
               const isDominant = a.pct === maxAgePct;
@@ -1286,7 +1302,7 @@ function GeneratedDemographicSection({
         </div>
         {/* Gender */}
         <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Gender Distribution</div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Gender Distribution<InfoTooltip text="Lifetime gender breakdown of players in this segment based on GHT survey data. Does not change by month." /></div>
           <div className="flex items-center gap-5">
             <DonutChart data={profile.gender} colors={GENDER_COLORS} />
             <div className="space-y-2">
@@ -1430,19 +1446,140 @@ function GeneratedPsychographicSection({
   );
 }
 
+function GeneratedPriorBehaviorSection({
+  priorBehavior,
+  segColor,
+  projectTitle,
+}: {
+  priorBehavior: NonNullable<import("@/app/api/generate-profile/route").GeneratedProfile["priorBehavior"]>;
+  segColor: string;
+  projectTitle: string;
+}) {
+  const topGames = priorBehavior.topGames30dPrior.slice(0, 20);
+  const overlap30 = priorBehavior.overlapIndex30d.slice(0, 30);
+  const overlapLife = priorBehavior.overlapIndexLifetime.slice(0, 25);
+
+  return (
+    <>
+      <p className="text-sm text-nz-text-secondary mb-5">
+        Reveals which games players in this segment were playing before they discovered {projectTitle}.
+        Use this to find partner titles for cross-promotion, identify UA targeting opportunities,
+        and brief your media buying team.
+      </p>
+
+      <div className="grid grid-cols-2 gap-5 mb-5">
+        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+          <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
+            Top Games Played in 30 Days Before Adoption
+            <InfoTooltip text="Games most commonly played by this segment in the 30 days before they adopted titles in this category. Use this to identify cross-promotion partners and media targeting opportunities." />
+          </h3>
+          <div style={{ height: 500 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={topGames} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 11, fill: "#6B7280" }} />
+                <YAxis type="category" dataKey="title" width={140} tick={{ fontSize: 10, fill: "#6B7280" }} />
+                <Tooltip
+                  contentStyle={{ fontSize: 12, border: "1px solid #E5E7EB" }}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any, _name: any, props: any) => [
+                    `${formatNumber(value)} adopters played this in the 30 days before adopting your title`,
+                    props.payload.title,
+                  ]}
+                />
+                <Bar dataKey="adopterCount" fill={segColor} radius={[0, 3, 3, 0]} barSize={14} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+          <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
+            Overlap Index &mdash; 30 Day Prior Window (Top 30)
+            <InfoTooltip text="Measures how much more likely players in this segment are to have played each title in the 30 days before adoption, compared to the general panel. A score of 40 means 40x more likely." />
+          </h3>
+          <div style={{ height: 500 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={overlap30} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 11, fill: "#6B7280" }} />
+                <YAxis type="category" dataKey="title" width={140} tick={{ fontSize: 10, fill: "#6B7280" }} />
+                <Tooltip
+                  contentStyle={{ fontSize: 12, border: "1px solid #E5E7EB" }}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any) => [
+                    `Overlap Index ${value} — ${Number(value) > 1 ? "players of this game are more likely than average to adopt your title" : "below average overlap"}`,
+                    "Overlap Index",
+                  ]}
+                />
+                <ReferenceLine x={1} stroke="#6B7280" strokeDasharray="4 4" />
+                <Bar dataKey="overlapIndex" fill="#805AD5" radius={[0, 3, 3, 0]} barSize={14} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
+        <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
+          Overlap Index &mdash; Lifetime
+          <InfoTooltip text="Same as the 30-day overlap index but across the player's full lifetime history. Useful for identifying deeper genre and franchise affinities beyond the pre-adoption window." />
+        </h3>
+        <div style={{ height: 600 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={overlapLife} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: "#6B7280" }} />
+              <YAxis type="category" dataKey="title" width={160} tick={{ fontSize: 11, fill: "#6B7280" }} />
+              <Tooltip
+                contentStyle={{ fontSize: 12, border: "1px solid #E5E7EB" }}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                formatter={(value: any) => [
+                  `Overlap Index ${value} — ${Number(value) > 1 ? "above average lifetime overlap" : "below average"}`,
+                  "Lifetime Overlap Index",
+                ]}
+              />
+              <ReferenceLine x={1} stroke="#6B7280" strokeDasharray="4 4" />
+              <Bar dataKey="overlapIndex" fill="#6B46C1" radius={[0, 3, 3, 0]} barSize={16} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </>
+  );
+}
+
+const PRE_LAUNCH_LIFECYCLES = ["Concept/Pre-Greenlight", "In Development", "Pre-Launch"];
+
+function isPreLaunchLifecycle(lifecycle: string): boolean {
+  const lc = lifecycle.toLowerCase();
+  return lc.includes("greenlight") || lc.includes("concept") || lc.includes("development") || lc.includes("pre-launch") || lc.includes("prelaunch");
+}
+
+function PredictedBadge() {
+  return (
+    <span className="ml-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-[#FEF3E0] text-[#B96B00] uppercase">
+      PREDICTED
+    </span>
+  );
+}
+
 function GeneratedConversionFunnel({
   segName,
   addressableMarket,
   conversionRate,
   totalTrackedUsers,
   segColor,
+  lifecycle,
 }: {
   segName: string;
   addressableMarket: number;
   conversionRate: number;
   totalTrackedUsers: number;
   segColor: string;
+  lifecycle: string;
 }) {
+  const isPreLaunch = isPreLaunchLifecycle(lifecycle);
   const adopters = Math.round(addressableMarket * (conversionRate / 100));
   const stages = [
     { label: "Total Tracked", value: totalTrackedUsers, pct: 100 },
@@ -1450,9 +1587,13 @@ function GeneratedConversionFunnel({
     { label: "Adopters", value: adopters, pct: totalTrackedUsers > 0 ? (adopters / totalTrackedUsers) * 100 : 0 },
   ];
 
+  const funnelTooltip = isPreLaunch
+    ? "All figures are modelled projections based on benchmark conversion rates from comparable launched titles. Actual results will vary."
+    : "Shows how many players in this segment converted to adopters. Use this to understand your segment's addressable opportunity and current penetration.";
+
   return (
     <>
-      <SectionHeader title="Conversion Funnel" tooltip="Shows how many players in this segment converted to adopters." />
+      <SectionHeader title="Conversion Funnel" tooltip={funnelTooltip} />
       <div className="bg-white rounded-lg border border-nz-border p-6 mb-6 shadow-sm">
         <div className="space-y-3">
           {stages.map((stage, i) => {
@@ -1461,7 +1602,10 @@ function GeneratedConversionFunnel({
             return (
               <div key={stage.label}>
                 <div className="flex items-center gap-4">
-                  <div className="w-28 text-xs text-nz-text-secondary text-right">{stage.label}</div>
+                  <div className="w-28 text-xs text-nz-text-secondary text-right flex items-center justify-end">
+                    {stage.label}
+                    {isPreLaunch && stage.label === "Adopters" && <PredictedBadge />}
+                  </div>
                   <div className="flex-1 relative">
                     <div
                       className="h-10 rounded-lg flex items-center px-3 transition-all"
@@ -1486,7 +1630,10 @@ function GeneratedConversionFunnel({
         </div>
         <div className="mt-4 pt-4 border-t border-nz-border flex items-center justify-between">
           <span className="text-xs text-nz-text-muted">Conversion Rate (Addressable &rarr; Adopters)</span>
-          <span className="text-lg font-bold" style={{ color: segColor }}>{conversionRate}%</span>
+          <span className="flex items-center">
+            <span className="text-lg font-bold" style={{ color: segColor }}>{conversionRate}%</span>
+            {isPreLaunch && <PredictedBadge />}
+          </span>
         </div>
       </div>
     </>
@@ -1708,6 +1855,7 @@ function GeneratedProfileContent({
             conversionRate={conversionRate}
             totalTrackedUsers={totalTrackedUsers}
             segColor={segColor}
+            lifecycle={lifecycle}
           />
         </>
       )}
@@ -1719,7 +1867,11 @@ function GeneratedProfileContent({
         />
       )}
       {activeSubTab === "prior" && (
-        <GeneratedPsychographicSection profile={profile} segColor={segColor} />
+        profile.priorBehavior ? (
+          <GeneratedPriorBehaviorSection priorBehavior={profile.priorBehavior} segColor={segColor} projectTitle={projectTitle} />
+        ) : (
+          <GeneratedPsychographicSection profile={profile} segColor={segColor} />
+        )
       )}
     </>
   );

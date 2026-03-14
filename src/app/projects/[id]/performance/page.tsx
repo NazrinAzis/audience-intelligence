@@ -576,29 +576,25 @@ export default function PerformancePage() {
             <div className={`flex items-start gap-3 px-4 py-3 rounded-lg mb-6 ${
               isLaunched
                 ? "bg-amber-50 border border-amber-200"
-                : "bg-blue-50 border border-blue-100"
+                : "bg-amber-50 border border-amber-200"
             }`}>
               <svg
-                className={`w-5 h-5 mt-0.5 shrink-0 ${isLaunched ? "text-amber-500" : "text-nz-primary"}`}
+                className="w-5 h-5 mt-0.5 shrink-0 text-amber-500"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
-                {isLaunched ? (
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                ) : (
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                )}
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              <p className={`text-sm ${isLaunched ? "text-amber-800" : "text-nz-text-secondary"}`}>
+              <p className="text-sm text-amber-800">
                 {isLaunched ? (
                   <>
                     <span className="font-semibold">Trajectory Validation Mode (Premium / P2P):</span>{" "}
-                    GPME measures market-level engagement — trajectory shape is the signal, not absolute numbers.
+                    GPME measures market-level engagement &mdash; trajectory shape is the signal, not absolute numbers.
                   </>
                 ) : (
                   <>
                     <span className="font-semibold">Projected Performance:</span>{" "}
-                    Curves modelled from benchmark trajectories of comparable launched titles. Actual results will vary.
+                    All adoption figures are modelled from benchmark trajectories of comparable launched titles. No actual data exists yet for this title. Actual results will vary.
                   </>
                 )}
               </p>
@@ -611,8 +607,10 @@ export default function PerformancePage() {
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-sm font-semibold text-nz-text">
                   <MetricTooltip
-                    label={`Cumulative Adoption Share by Segment \u2014 ${timeRange}`}
-                    definition="% of each segment's addressable market that has adopted the game by this day since launch."
+                    label={`Cumulative Adoption Share by Segment${!isLaunched ? " (Predicted)" : ""} \u2014 ${timeRange}`}
+                    definition={isLaunched
+                      ? "% of each segment's addressable market that has adopted the game by this day since launch."
+                      : "For pre-launch projects, curves are modelled using an S-curve trajectory seeded from the benchmark conversion rates of comparable launched titles. The shaded band represents the 25th\u201375th percentile confidence range."}
                     whyItMatters="Shows how quickly each segment converts over time. Steep early curves = strong product-market fit."
                   />
                 </h3>
@@ -694,13 +692,14 @@ export default function PerformancePage() {
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                       <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#6B7280" }} label={{ value: "Day", position: "insideBottom", offset: -5, fontSize: 11, fill: "#6B7280" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#6B7280" }} tickFormatter={(v) => `${v}%`} label={{ value: "% Adoption", angle: -90, position: "insideLeft", fontSize: 11, fill: "#6B7280" }} domain={[0, yMax]} />
+                      <YAxis tick={{ fontSize: 11, fill: "#6B7280" }} tickFormatter={(v) => `${v}%`} label={{ value: isLaunched ? "% Adoption" : "% Adoption (Predicted)", angle: -90, position: "insideLeft", fontSize: 11, fill: "#6B7280" }} domain={[0, yMax]} />
                       <Tooltip contentStyle={{ fontSize: 12, border: "1px solid #E5E7EB", borderRadius: 6 }}
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         formatter={(value: any, name: any) => {
                           const idx = String(name).match(/seg_(\d+)_pct$/)?.[1];
-                          const label = idx !== undefined ? segs[Number(idx)]?.name : name === "noSeg" ? "No Target Segment" : name;
-                          return [`${value}%`, label || name];
+                          const segLabel = idx !== undefined ? segs[Number(idx)]?.name : name === "noSeg" ? "No Target Segment" : name;
+                          const label = !isLaunched && segLabel ? `Projected \u2014 ${segLabel}` : segLabel || name;
+                          return [`${value}%`, label];
                         }}
                         labelFormatter={(v) => `Day ${v}`}
                       />
@@ -801,8 +800,10 @@ export default function PerformancePage() {
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-sm font-semibold text-nz-text">
                     <MetricTooltip
-                      label="Daily New Adopters by Segment"
-                      definition="New players adopting per day, broken down by segment."
+                      label={`Daily New Adopters by Segment${!isLaunched ? " (Predicted)" : ""}`}
+                      definition={isLaunched
+                        ? "New players adopting per day, broken down by segment."
+                        : "Projected daily new players per segment based on benchmark adoption patterns. Launch spike at D1 reflects typical category behaviour. Actual day-1 spikes vary significantly by title."}
                       whyItMatters="Shows the launch spike shape and how quickly adoption decays. A sharp D1 spike followed by a long tail is the typical pattern for premium titles."
                     />
                   </h3>
@@ -836,10 +837,11 @@ export default function PerformancePage() {
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         formatter={(value: any, name: any) => {
                           const idx = String(name).match(/seg_(\d+)$/)?.[1];
-                          const label = idx !== undefined
+                          const segLabel = idx !== undefined
                             ? (isKcd2 ? kcd2Segments[Number(idx)]?.name : segs[Number(idx)]?.name) || name
                             : name === "noSeg" ? "No Target Segment" : name;
-                          return [formatNumber(value), label];
+                          const label = !isLaunched && segLabel ? `Projected \u2014 ${segLabel}` : segLabel;
+                          return [`~${formatNumber(value)}`, label];
                         }}
                         labelFormatter={(v) => `Day ${v}`}
                       />
@@ -874,8 +876,10 @@ export default function PerformancePage() {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-nz-text">
                     <MetricTooltip
-                      label="Adoption Milestones by Segment"
-                      definition="Cumulative adopters at key time milestones (Day 1, 7, 30, 90) for each segment."
+                      label={`Adoption Milestones by Segment${!isLaunched ? " (Predicted)" : ""}`}
+                      definition={isLaunched
+                        ? "Cumulative adopters at key time milestones (Day 1, 7, 30, 90) for each segment."
+                        : "Projected cumulative adopters at D1, D7, D30, D90. Ranges reflect the low\u2013high benchmark confidence band. Use this to set expectations for launch-window KPIs."}
                       whyItMatters="Track whether your launch trajectory is front-loaded (strong product-market fit) or slow-burn (needs sustained marketing). Compare segments to see which audiences activate fastest."
                     />
                   </h3>
@@ -890,7 +894,7 @@ export default function PerformancePage() {
                         <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">D7</th>
                         <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">D30</th>
                         <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">D90</th>
-                        <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">vs Benchmark</th>
+                        <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">{isLaunched ? "vs Benchmark" : "vs Benchmark (Projected)"}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -909,28 +913,28 @@ export default function PerformancePage() {
                           </td>
                           <td className="py-3 px-3 text-right text-nz-text">
                             {!isLaunched && row.d1High ? (
-                              <span className="text-xs">{formatNumber(row.d1)}&ndash;{formatNumber(row.d1High)}</span>
+                              <span className="text-xs">{formatNumber(row.d1)}&ndash;{formatNumber(row.d1High)} <span className="text-[8px] font-bold px-1 py-0.5 rounded-full bg-[#FEF3E0] text-[#B96B00] uppercase ml-0.5">PREDICTED</span></span>
                             ) : (
                               formatNumber(row.d1)
                             )}
                           </td>
                           <td className="py-3 px-3 text-right text-nz-text">
                             {!isLaunched && row.d7High ? (
-                              <span className="text-xs">{formatNumber(row.d7)}&ndash;{formatNumber(row.d7High)}</span>
+                              <span className="text-xs">{formatNumber(row.d7)}&ndash;{formatNumber(row.d7High)} <span className="text-[8px] font-bold px-1 py-0.5 rounded-full bg-[#FEF3E0] text-[#B96B00] uppercase ml-0.5">PREDICTED</span></span>
                             ) : (
                               formatNumber(row.d7)
                             )}
                           </td>
                           <td className="py-3 px-3 text-right text-nz-text">
                             {!isLaunched && row.d30High ? (
-                              <span className="text-xs">{formatNumber(row.d30)}&ndash;{formatNumber(row.d30High)}</span>
+                              <span className="text-xs">{formatNumber(row.d30)}&ndash;{formatNumber(row.d30High)} <span className="text-[8px] font-bold px-1 py-0.5 rounded-full bg-[#FEF3E0] text-[#B96B00] uppercase ml-0.5">PREDICTED</span></span>
                             ) : (
                               formatNumber(row.d30)
                             )}
                           </td>
                           <td className="py-3 px-3 text-right text-nz-text">
                             {!isLaunched && row.d90High ? (
-                              <span className="text-xs">{formatNumber(row.d90)}&ndash;{formatNumber(row.d90High)}</span>
+                              <span className="text-xs">{formatNumber(row.d90)}&ndash;{formatNumber(row.d90High)} <span className="text-[8px] font-bold px-1 py-0.5 rounded-full bg-[#FEF3E0] text-[#B96B00] uppercase ml-0.5">PREDICTED</span></span>
                             ) : (
                               formatNumber(row.d90)
                             )}

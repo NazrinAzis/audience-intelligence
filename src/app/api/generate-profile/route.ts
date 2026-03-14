@@ -48,6 +48,82 @@ export interface GeneratedProfile {
   playerValues: { value: string; pct: number }[];
   socialPlatforms: { platform: string; pct: number }[];
   personas: { persona: string; pct: number }[];
+  priorBehavior?: {
+    topGames30dPrior: { title: string; adopterCount: number }[];
+    overlapIndex30d: { title: string; overlapIndex: number }[];
+    overlapIndexLifetime: { title: string; overlapIndex: number }[];
+  };
+}
+
+// ─── Game title pools by genre/theme for realistic prior behavior data ───
+
+const GAME_POOLS: Record<string, string[]> = {
+  "Action RPG": ["Elden Ring", "Diablo IV", "Path of Exile 2", "Baldur's Gate 3", "Cyberpunk 2077", "The Witcher 3", "Dark Souls III", "Monster Hunter: World", "Nioh 2", "Dragon's Dogma 2", "Lies of P", "Black Myth: Wukong", "Genshin Impact", "Torchlight Infinite"],
+  "RPG": ["Baldur's Gate 3", "Divinity: Original Sin 2", "Pillars of Eternity II", "Starfield", "Persona 5 Royal", "Final Fantasy XVI", "Dragon Age: The Veilguard"],
+  "Role Playing": ["Baldur's Gate 3", "Divinity: Original Sin 2", "Pillars of Eternity II", "Starfield", "Persona 5 Royal", "Final Fantasy XVI", "Dragon Age: The Veilguard"],
+  "Action": ["God of War Ragnarök", "Devil May Cry 5", "Bayonetta 3", "Sekiro", "Stellar Blade", "Hi-Fi Rush"],
+  "Adventure": ["The Legend of Zelda: Tears of the Kingdom", "Uncharted 4", "A Plague Tale: Requiem", "It Takes Two", "Psychonauts 2"],
+  "Strategy": ["Civilization VI", "Total War: Pharaoh", "Age of Empires IV", "Crusader Kings III", "XCOM 2", "Hearts of Iron IV"],
+  "Simulation": ["Microsoft Flight Simulator", "Cities: Skylines II", "Farming Simulator 22", "Planet Coaster 2", "Two Point Campus"],
+  "Souls-like": ["Elden Ring", "Dark Souls III", "Sekiro", "Lies of P", "Nioh 2", "Mortal Shell", "Lords of the Fallen", "Black Myth: Wukong"],
+  "Open World": ["Elden Ring", "Cyberpunk 2077", "Red Dead Redemption 2", "GTA V", "Starfield", "Horizon Forbidden West", "Ghost of Tsushima"],
+  "Dark Fantasy": ["Elden Ring", "Dark Souls III", "Diablo IV", "Baldur's Gate 3", "Lords of the Fallen", "Path of Exile 2"],
+  "Medieval": ["Kingdom Come: Deliverance", "Mount & Blade II: Bannerlord", "Crusader Kings III", "A Plague Tale: Requiem", "Chivalry 2", "Medieval Dynasty"],
+  "Fantasy": ["Baldur's Gate 3", "Elden Ring", "The Witcher 3", "Final Fantasy XVI", "Dragon Age: The Veilguard", "Genshin Impact"],
+  "Sci-Fi": ["Cyberpunk 2077", "Starfield", "Mass Effect Legendary Edition", "Stellaris", "No Man's Sky", "Outer Wilds"],
+  default: ["Counter-Strike 2", "Fortnite", "Minecraft", "Roblox", "League of Legends", "DOTA 2", "Apex Legends", "Valorant", "GTA V", "Red Dead Redemption 2", "Call of Duty: Modern Warfare III", "FIFA 24", "NBA 2K24", "Destiny 2", "World of Warcraft", "Overwatch 2", "Palworld", "Stardew Valley", "The Sims 4", "Among Us", "Rocket League", "Terraria", "Dead by Daylight", "Phasmophobia", "Lethal Company", "Hades II", "Balatro", "Helldivers 2", "Manor Lords", "Satisfactory"],
+};
+
+function generatePriorBehavior(
+  addressableMarket: number,
+  genres: string[],
+  subGenres: string[],
+  themes: string[],
+  mechanics: string[],
+): NonNullable<GeneratedProfile["priorBehavior"]> {
+  // Collect relevant games from pools based on rules
+  const relevantGames = new Set<string>();
+  const allTags = [...genres, ...subGenres, ...themes, ...mechanics];
+  for (const tag of allTags) {
+    const pool = GAME_POOLS[tag];
+    if (pool) pool.forEach((g) => relevantGames.add(g));
+  }
+  // Fill with defaults if not enough
+  for (const g of GAME_POOLS.default) {
+    if (relevantGames.size >= 30) break;
+    relevantGames.add(g);
+  }
+  const gameList = Array.from(relevantGames).slice(0, 30);
+
+  // Generate topGames30dPrior — sorted by adopter count descending
+  const topGames30dPrior = gameList.map((title, i) => ({
+    title,
+    adopterCount: Math.round(addressableMarket * (0.35 - i * 0.009) * (0.8 + Math.random() * 0.4)),
+  })).sort((a, b) => b.adopterCount - a.adopterCount);
+
+  // Generate overlapIndex30d — higher for rule-matched games
+  const overlapIndex30d = gameList.map((title) => {
+    const isRuleMatch = allTags.some((tag) => GAME_POOLS[tag]?.includes(title));
+    return {
+      title,
+      overlapIndex: isRuleMatch
+        ? Math.round((8 + Math.random() * 35) * 10) / 10
+        : Math.round((0.5 + Math.random() * 4) * 10) / 10,
+    };
+  }).sort((a, b) => b.overlapIndex - a.overlapIndex);
+
+  // Generate overlapIndexLifetime — slightly different distribution
+  const overlapIndexLifetime = gameList.map((title) => {
+    const isRuleMatch = allTags.some((tag) => GAME_POOLS[tag]?.includes(title));
+    return {
+      title,
+      overlapIndex: isRuleMatch
+        ? Math.round((5 + Math.random() * 25) * 10) / 10
+        : Math.round((0.8 + Math.random() * 3) * 10) / 10,
+    };
+  }).sort((a, b) => b.overlapIndex - a.overlapIndex);
+
+  return { topGames30dPrior, overlapIndex30d, overlapIndexLifetime };
 }
 
 function heuristicProfile(req: GenerateProfileRequest): GeneratedProfile {
@@ -74,6 +150,10 @@ function heuristicProfile(req: GenerateProfileRequest): GeneratedProfile {
     .flatMap((r) => parseMultiValue(r.entityValue));
   const themes = rules.playRules
     .filter((r) => r.entityType === "theme" && r.entityValue)
+    .flatMap((r) => parseMultiValue(r.entityValue));
+
+  const mechanics = rules.playRules
+    .filter((r) => r.entityType === "mechanic" && r.entityValue)
     .flatMap((r) => parseMultiValue(r.entityValue));
 
   const allGenres = [...new Set([...genres, "Role Playing", "Action", "Adventure", "Strategy", "Simulation"])].slice(0, 3);
@@ -166,6 +246,7 @@ function heuristicProfile(req: GenerateProfileRequest): GeneratedProfile {
       { persona: "Planners & Tacticians", pct: 10 + Math.round(Math.random() * 18) },
       { persona: "Open World Rangers", pct: 8 + Math.round(Math.random() * 15) },
     ],
+    priorBehavior: generatePriorBehavior(addressableMarket, genres, subGenres, themes, mechanics),
   };
 }
 
