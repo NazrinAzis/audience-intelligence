@@ -194,43 +194,36 @@ export const SUB_GENRES: Record<Genre, string[]> = {
   ],
 };
 
-export const ALL_SUB_GENRES = Object.values(SUB_GENRES).flat();
+export const ALL_SUB_GENRES = [...new Set(Object.values(SUB_GENRES).flat())].sort();
 
 export const THEMES = [
-  // Historic
-  "Historic — Modern Era",
-  "Historic — Western",
-  "Historic — Medieval",
-  "Historic — Asian Imperial Age & Dynasties",
-  "Historic — Prehistoric",
-  "Historic — Ancient History",
-  "Historic — Industrial Era",
-  "Historic — Renaissance",
-  // Fantasy
-  "Fantasy — Mythology",
+  "Contemporary — Modern Day",
+  "Contemporary — Popular Culture",
+  "Contemporary — Sports and Athletics",
+  "Contemporary — War",
   "Fantasy — Dark Fantasy",
   "Fantasy — High Magical Fantasy",
   "Fantasy — Low Magical Fantasy",
-  // Science Fiction
-  "Science Fiction — Historical Science Fiction",
+  "Fantasy — Mythology",
+  "Historic — Ancient History",
+  "Historic — Asian Imperial Age & Dynasties",
+  "Historic — Industrial Era",
+  "Historic — Medieval",
+  "Historic — Modern Era",
+  "Historic — Prehistoric",
+  "Historic — Renaissance",
+  "Historic — Western",
+  "Horror — Gothic/Occult",
+  "Horror — Monster",
+  "Horror — Paranormal",
+  "Horror — Psychological",
+  "Horror — Slasher",
+  "Mystery / Detective",
+  "Other",
   "Science Fiction — Advanced Human Society",
   "Science Fiction — Alien Galaxy",
   "Science Fiction — Apocalyptic",
-  // Contemporary
-  "Contemporary — War",
-  "Contemporary — Sports and Athletics",
-  "Contemporary — Modern Day",
-  "Contemporary — Popular Culture",
-  // Horror
-  "Horror — Gothic/Occult",
-  "Horror — Monster",
-  "Horror — Psychological",
-  "Horror — Slasher",
-  "Horror — Paranormal",
-  // Mystery
-  "Mystery / Detective",
-  // Other
-  "Other",
+  "Science Fiction — Historical Science Fiction",
 ] as const;
 
 export const THEME_GROUPS = [
@@ -244,42 +237,42 @@ export const THEME_GROUPS = [
 ] as const;
 
 export const GAME_MODES = [
-  "Story Mode / Campaign",
-  "Death Match",
-  "Wave Based Survival",
-  "Capture the Flag",
-  "Domination",
-  "Attack/Defend",
-  "Build & Battle",
-  "Base Capture",
   "Asymmetrical Mission",
-  "Dungeons/Raids",
-  "Sports & Racing",
+  "Attack/Defend",
+  "Base Capture",
   "Best Score",
-  "Level Completion",
+  "Build & Battle",
+  "Capture the Flag",
+  "Death Match",
+  "Domination",
+  "Dungeons/Raids",
   "Last One Standing / Survival",
-  "Sandbox / Free Play",
+  "Level Completion",
   "Level Editor",
+  "Sandbox / Free Play",
+  "Sports & Racing",
+  "Story Mode / Campaign",
+  "Wave Based Survival",
 ] as const;
 
 export const ART_STYLES = [
-  "Realistic",
-  "Stylized Realistic",
-  "Cartoon",
-  "Anime / Manga",
-  "Pixel Art",
-  "Voxel",
   "Abstract",
-  "Minimalist",
+  "Anime / Manga",
+  "Cartoon",
   "Hand-Drawn",
   "Low Poly",
+  "Minimalist",
+  "Pixel Art",
+  "Realistic",
+  "Stylized Realistic",
+  "Voxel",
 ] as const;
 
 export const COMPETITIVENESS = [
   "Competitive",
-  "Semi-Competitive",
   "Cooperative",
   "Non-Competitive",
+  "Semi-Competitive",
 ] as const;
 
 export const DIMENSIONALITY = [
@@ -291,18 +284,18 @@ export const DIMENSIONALITY = [
 
 export const PERSPECTIVE = [
   "First Person",
-  "Third Person",
-  "Top-Down",
+  "Fixed Camera",
   "Isometric",
   "Side-Scrolling",
-  "Fixed Camera",
+  "Third Person",
+  "Top-Down",
 ] as const;
 
 export const MONETIZATION = [
-  "Premium / Pay to Play",
   "Free to Play",
-  "Subscription",
   "Freemium",
+  "Premium / Pay to Play",
+  "Subscription",
 ] as const;
 
 export const MSRP_RANGES = [
@@ -318,25 +311,25 @@ export const MSRP_RANGES = [
 ] as const;
 
 export const PLAYER_NUMBER = [
-  "Single Player",
   "Local Multiplayer",
-  "Online Multiplayer",
   "MMO",
+  "Online Multiplayer",
+  "Single Player",
 ] as const;
 
 // ─── Newzoo Motivational Gamer Personas ───
 // Source: Newzoo Persona Handbook (Global Gamer Study 2025)
 export const PERSONAS = [
-  "Story-first Players",
-  "Solo Adventurers",
+  "Builders, Farmers, & Nurturers",
+  "Competition Lovers",
   "Hero Protagonists",
   "Open World Rangers",
-  "Style-Conscious Party Players",
-  "Competition Lovers",
   "Planners & Tacticians",
-  "Builders, Farmers, & Nurturers",
-  "Second-Life Escapists",
   "Puzzlers & Personal Besters",
+  "Second-Life Escapists",
+  "Solo Adventurers",
+  "Story-first Players",
+  "Style-Conscious Party Players",
 ] as const;
 
 export type Persona = (typeof PERSONAS)[number];
@@ -344,58 +337,58 @@ export type Persona = (typeof PERSONAS)[number];
 // ─── Sample game titles for auto-complete ───
 // Real titles used in mockData for overlap / top-games charts
 export const SAMPLE_TITLES = [
-  "Kingdom Come: Deliverance II",
-  "EA Sports FC 25",
-  "Grand Theft Auto V",
-  "Counter-Strike 2",
-  "The Witcher 3: Wild Hunt",
-  "Elden Ring",
-  "Baldur's Gate 3",
-  "Sid Meier's Civilization VI",
-  "Medieval Dynasty",
-  "Mount & Blade II: Bannerlord",
-  "Total War: Warhammer III",
-  "Europa Universalis IV",
-  "Manor Lords",
-  "Red Dead Redemption 2",
-  "Forza Horizon 5",
-  "Cyberpunk 2077",
-  "Hogwarts Legacy",
-  "Stardew Valley",
-  "Minecraft",
-  "Destiny 2",
-  "Call of Duty: Modern Warfare III",
-  "Apex Legends",
-  "Valorant",
-  "League of Legends",
-  "Dota 2",
-  "Palworld",
-  "Helldivers 2",
-  "Warhammer 40K: Space Marine 2",
-  "Dragon's Dogma 2",
-  "Assassin's Creed Valhalla",
-  "God of War Ragnarök",
-  "Dark Souls III",
-  "Crusader Kings III",
-  "Hearts of Iron IV",
-  "Stellaris",
   "Age of Empires IV",
-  "Starfield",
-  "No Man's Sky",
-  "Path of Exile 2",
+  "Apex Legends",
+  "Assassin's Creed Valhalla",
+  "Baldur's Gate 3",
+  "Call of Duty: Modern Warfare III",
+  "Counter-Strike 2",
+  "Crusader Kings III",
+  "Cyberpunk 2077",
+  "Dark Souls III",
+  "Destiny 2",
   "Diablo IV",
+  "Dota 2",
+  "Dragon's Dogma 2",
+  "EA Sports FC 25",
+  "Elden Ring",
+  "Europa Universalis IV",
+  "Forza Horizon 5",
+  "God of War Ragnarök",
+  "Grand Theft Auto V",
+  "Hearts of Iron IV",
+  "Helldivers 2",
+  "Hogwarts Legacy",
+  "Kingdom Come: Deliverance II",
+  "League of Legends",
+  "Manor Lords",
+  "Medieval Dynasty",
+  "Minecraft",
+  "Mount & Blade II: Bannerlord",
+  "No Man's Sky",
+  "Palworld",
+  "Path of Exile 2",
+  "Red Dead Redemption 2",
+  "Sid Meier's Civilization VI",
+  "Starfield",
+  "Stardew Valley",
+  "Stellaris",
+  "The Witcher 3: Wild Hunt",
+  "Total War: Warhammer III",
+  "Valorant",
+  "Warhammer 40K: Space Marine 2",
 ] as const;
 
 // ─── Pre-built game sets for quick selection ───
 export const GAME_SETS = [
-  "Top 50 Steam Sellers (Last 30 Days)",
+  "AAA Releases (Last 12 Months)",
+  "Free-to-Play Top 50",
+  "Indie Hits (Last 12 Months)",
+  "New Releases (Last 60 Days)",
   "Top 20 RPGs (Lifetime)",
   "Top 20 Strategy Games (Lifetime)",
   "Top 30 Action-Adventure (Last 90 Days)",
-  "New Releases (Last 60 Days)",
-  "Free-to-Play Top 50",
-  "AAA Releases (Last 12 Months)",
-  "Indie Hits (Last 12 Months)",
+  "Top 50 Steam Sellers (Last 30 Days)",
 ] as const;
 
 // ─── Rule entity types for the segment query builder ───
@@ -451,7 +444,7 @@ export const AGE_GROUPS = [
 ] as const;
 
 export const GENDERS = [
-  "Male", "Female", "Non-binary", "Prefer not to say",
+  "Female", "Male", "Non-binary", "Prefer not to say",
 ] as const;
 
 export const HOUSEHOLD_INCOMES = [
@@ -463,27 +456,27 @@ export const EDUCATION_LEVELS = [
 ] as const;
 
 export const DEMOGRAPHIC_REGIONS = [
-  "North America", "Western Europe", "Eastern Europe", "Asia Pacific",
-  "Latin America", "Middle East & Africa", "Oceania",
+  "Asia Pacific", "Eastern Europe", "Latin America", "Middle East & Africa",
+  "North America", "Oceania", "Western Europe",
 ] as const;
 
 export const COUNTRIES = [
-  "United States", "Canada", "United Kingdom", "Germany", "France",
-  "Spain", "Italy", "Netherlands", "Sweden", "Poland", "Brazil",
-  "Mexico", "Argentina", "Japan", "South Korea", "China", "Australia",
-  "India", "Indonesia", "Russia", "Turkey", "Saudi Arabia", "UAE",
-  "South Africa", "Nigeria", "Egypt", "Thailand", "Vietnam",
-  "Philippines", "Colombia",
+  "Argentina", "Australia", "Brazil", "Canada", "China", "Colombia",
+  "Egypt", "France", "Germany", "India", "Indonesia", "Italy",
+  "Japan", "Mexico", "Netherlands", "Nigeria", "Philippines", "Poland",
+  "Russia", "Saudi Arabia", "South Africa", "South Korea", "Spain",
+  "Sweden", "Thailand", "Turkey", "UAE", "United Kingdom",
+  "United States", "Vietnam",
 ] as const;
 
 export const DEVICE_OWNERSHIP = [
-  "PC", "Console", "Mobile", "Tablet", "PC + Console",
-  "Console + Mobile", "All platforms",
+  "All platforms", "Console", "Console + Mobile", "Mobile",
+  "PC", "PC + Console", "Tablet",
 ] as const;
 
 export const EMPLOYMENT = [
-  "Student", "Employed full-time", "Employed part-time",
-  "Self-employed", "Unemployed", "Retired",
+  "Employed full-time", "Employed part-time", "Retired",
+  "Self-employed", "Student", "Unemployed",
 ] as const;
 
 export interface DemographicAttribute {
@@ -506,16 +499,16 @@ export const DEMOGRAPHIC_ATTRIBUTES: DemographicAttribute[] = [
 // ─── Psychographic attributes (WHY THEY PLAY) ───
 
 export const GAMING_MOTIVATIONS = [
-  "Escapism", "Social Connection", "Competition", "Achievement",
-  "Exploration", "Creativity", "Relaxation", "Storytelling",
-  "Mastery", "Status & Recognition",
+  "Achievement", "Competition", "Creativity", "Escapism",
+  "Exploration", "Mastery", "Relaxation", "Social Connection",
+  "Status & Recognition", "Storytelling",
 ] as const;
 
 export const PLAYER_VALUES = [
-  "Narrative depth", "Visual fidelity", "Social features",
-  "Replayability", "World-building", "Mechanical complexity",
-  "Multiplayer", "Solo experience", "Modding support",
-  "Frequent updates", "Fair monetization",
+  "Fair monetization", "Frequent updates", "Mechanical complexity",
+  "Modding support", "Multiplayer", "Narrative depth",
+  "Replayability", "Social features", "Solo experience",
+  "Visual fidelity", "World-building",
 ] as const;
 
 export const GAMING_FREQUENCIES = [
@@ -523,7 +516,7 @@ export const GAMING_FREQUENCIES = [
 ] as const;
 
 export const PLATFORM_PREFERENCES = [
-  "PC-first", "Console-first", "Mobile-first", "Platform agnostic",
+  "Console-first", "Mobile-first", "PC-first", "Platform agnostic",
 ] as const;
 
 export interface PsychographicAttribute {
@@ -543,11 +536,11 @@ export const PSYCHOGRAPHIC_ATTRIBUTES: PsychographicAttribute[] = [
 // ─── Monetization attributes (WHAT THEY PAY) ───
 
 export const SPEND_CATEGORIES = [
-  "Games", "In-game items", "DLC/expansions", "Subscriptions", "Any gaming spend",
+  "Any gaming spend", "DLC/expansions", "Games", "In-game items", "Subscriptions",
 ] as const;
 
 export const PURCHASE_TYPES = [
-  "Premium titles", "F2P titles", "Any titles",
+  "Any titles", "F2P titles", "Premium titles",
 ] as const;
 
 export const PURCHASE_TIMEFRAMES = [30, 60, 90, 180, 365] as const;

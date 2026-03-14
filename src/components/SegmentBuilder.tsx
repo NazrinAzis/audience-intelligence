@@ -722,6 +722,7 @@ function PlayRuleRow({
               pillBg={qs.pillBg}
               pillColor={qs.pillColor}
               pillBorder={qs.pillBorder}
+              searchable
             />
             <MultiPillDropdown
               values={parseMultiValue(rule.entityValue)}
@@ -757,6 +758,7 @@ function PlayRuleRow({
               pillBg={qs.pillBg}
               pillColor={qs.pillColor}
               pillBorder={qs.pillBorder}
+              searchable
             />
             <MultiPillDropdown
               values={parseMultiValue(rule.entityValue)}

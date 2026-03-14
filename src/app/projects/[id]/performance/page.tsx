@@ -503,6 +503,63 @@ export default function PerformancePage() {
     comparator2: comparatorTitles.comparator2,
   };
 
+  // ─── Dynamic benchmark data for non-KCD2 projects ───
+  const dynamicBenchmarkInfo = useMemo(() => {
+    if (isKcd2 || segs.length === 0) return null;
+    const coreSeg = segs[0];
+    if (!coreSeg.convRate && !coreSeg.benchmarkConvMid) return null;
+
+    // Load comparableTitles from localStorage
+    let comparables: { title: string; convRate: number }[] = [];
+    try {
+      const raw = localStorage.getItem(`project_${projectId}_segments`);
+      if (raw) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const cols = JSON.parse(raw) as any[];
+        const core = cols.find((c) => c.analyzed && c.comparableTitles?.length > 0);
+        if (core) comparables = core.comparableTitles.slice(0, 2);
+      }
+    } catch { /* ignore */ }
+
+    const coreConv = coreSeg.convRate;
+    const catAvgConv = coreSeg.benchmarkConvMid || coreConv * 0.8;
+    const comp1Conv = comparables[0]?.convRate ?? catAvgConv * 1.15;
+    const comp2Conv = comparables[1]?.convRate ?? catAvgConv * 0.85;
+
+    const data: { day: number; kcd2: number; category_avg: number; comparator1: number; comparator2: number }[] = [];
+    for (let d = 1; d <= maxDay; d++) {
+      const frac = sCurveFraction(d);
+      data.push({
+        day: d,
+        kcd2: Math.round(frac * coreConv * 100) / 100,
+        category_avg: Math.round(frac * catAvgConv * 100) / 100,
+        comparator1: Math.round(frac * comp1Conv * 100) / 100,
+        comparator2: Math.round(frac * comp2Conv * 100) / 100,
+      });
+    }
+
+    const labels: Record<string, string> = {
+      kcd2: `${coreSeg.name} / Core`,
+      category_avg: "Category Average",
+      comparator1: comparables[0]?.title ?? "Top Comparator",
+      comparator2: comparables[1]?.title ?? "Avg Comparator",
+    };
+
+    return { data, labels };
+  }, [isKcd2, segs, projectId, maxDay]);
+
+  const benchmarkChartData = isKcd2 ? kcd2BenchmarkData : (dynamicBenchmarkInfo?.data ?? []);
+  const benchmarkChartLabels = isKcd2 ? benchmarkLegendLabels : (dynamicBenchmarkInfo?.labels ?? benchmarkLegendLabels);
+  const benchmarkChartYMax = useMemo(() => {
+    if (isKcd2) return yMax;
+    if (!dynamicBenchmarkInfo) return 10;
+    let max = 0;
+    for (const pt of dynamicBenchmarkInfo.data) {
+      max = Math.max(max, pt.kcd2, pt.category_avg, pt.comparator1, pt.comparator2);
+    }
+    return Math.ceil(max * 1.2);
+  }, [isKcd2, yMax, dynamicBenchmarkInfo]);
+
   // ─── Empty state ───
   if (!loading && !isKcd2 && segs.length === 0) {
     return (
@@ -743,40 +800,43 @@ export default function PerformancePage() {
             {/* ═══════════════════════════════════════════════════
                 CHART 2: KCD2 Benchmarking (only for kcd2)
             ═══════════════════════════════════════════════════ */}
-            {isKcd2 && (
+            {(isKcd2 || dynamicBenchmarkInfo) && (
               <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-sm font-semibold text-nz-text">
-                    Core Segment vs. Category &amp; Comparators
+                    Core Segment vs. Category &amp; Comparators{!isLaunched ? " (Predicted)" : ""}
                   </h3>
                   <div className="flex items-center gap-2">
                     <button className="text-xs text-nz-primary hover:underline font-medium">
                       + Add Comparator
                     </button>
-                    <StatusBadge type="actual" />
+                    <StatusBadge type={isLaunched ? "actual" : "projected"} />
                   </div>
                 </div>
-                <p className="text-xs text-nz-text-muted mb-1">Auto-filtered: P2P Premium titles only</p>
+                <p className="text-xs text-nz-text-muted mb-1">{isKcd2 ? "Auto-filtered: P2P Premium titles only" : "Benchmark comparators based on segment analysis"}</p>
                 <p className="text-xs text-nz-text-muted mb-4">
                   <MetricTooltip
                     label="Category Average"
-                    definition="Average adoption curve of comparable P2P Premium titles in the same genre."
+                    definition="Average adoption curve of comparable titles in the same genre."
                     whyItMatters="Your benchmark baseline. Outperforming this validates your go-to-market targeting."
                   />
                 </p>
                 <div style={{ height: 400 }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={kcd2BenchmarkData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <LineChart data={benchmarkChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                       <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#6B7280" }} label={{ value: "Day", position: "insideBottom", offset: -5, fontSize: 11, fill: "#6B7280" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#6B7280" }} tickFormatter={(v) => `${v}%`} label={{ value: "% Adoption", angle: -90, position: "insideLeft", fontSize: 11, fill: "#6B7280" }} domain={[0, yMax]} />
+                      <YAxis tick={{ fontSize: 11, fill: "#6B7280" }} tickFormatter={(v) => `${v}%`} label={{ value: isLaunched ? "% Adoption" : "% Adoption (Predicted)", angle: -90, position: "insideLeft", fontSize: 11, fill: "#6B7280" }} domain={[0, benchmarkChartYMax]} />
                       <Tooltip contentStyle={{ fontSize: 12, border: "1px solid #E5E7EB", borderRadius: 6 }}
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        formatter={(value: any, name: any) => [`${value}%`, benchmarkLegendLabels[name] || name]}
+                        formatter={(value: any, name: any) => {
+                          const prefix = !isLaunched ? "Projected \u2014 " : "";
+                          return [`${value}%`, `${prefix}${benchmarkChartLabels[name] || name}`];
+                        }}
                         labelFormatter={(v) => `Day ${v}`}
                       />
                       <Legend align="right" verticalAlign="top"
-                        formatter={(value: string) => benchmarkLegendLabels[value] || value}
+                        formatter={(value: string) => benchmarkChartLabels[value] || value}
                         wrapperStyle={{ fontSize: 12 }}
                       />
                       {milestoneLines(maxDay).map((m: { day: number; label: string }) => (

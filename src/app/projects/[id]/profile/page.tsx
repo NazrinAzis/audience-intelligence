@@ -560,8 +560,8 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
 
         {/* Device ownership */}
         <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
-            Device Ownership
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">
+            Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on GHT survey data. Players may own multiple devices." />
           </div>
           <div className="space-y-3">
             {data.devices.map((d, i) => (
@@ -583,8 +583,8 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
 
         {/* Region distribution */}
         <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
-            Region Distribution
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">
+            Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on GHT survey data and GPME geo-IP data." />
           </div>
           <div className="space-y-3">
             {data.regions.map((r) => (
@@ -1318,7 +1318,7 @@ function GeneratedDemographicSection({
         </div>
         {/* Devices */}
         <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Device Ownership</div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on GHT survey data. Players may own multiple devices." /></div>
           <div className="space-y-3">
             {profile.devices.map((d, i) => (
               <div key={d.device}>
@@ -1335,7 +1335,7 @@ function GeneratedDemographicSection({
         </div>
         {/* Regions */}
         <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Region Distribution</div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on GHT survey data and GPME geo-IP data." /></div>
           <div className="space-y-3">
             {profile.regions.map((r) => (
               <div key={r.region}>
@@ -1446,18 +1446,95 @@ function GeneratedPsychographicSection({
   );
 }
 
+function generateFallbackPriorBehavior(
+  projectId: string,
+  segIdx: number,
+  addressableMarket: number,
+): NonNullable<import("@/app/api/generate-profile/route").GeneratedProfile["priorBehavior"]> {
+  // Read segment rules from localStorage to seed game titles
+  let genres: string[] = [];
+  let subGenres: string[] = [];
+  let themes: string[] = [];
+  try {
+    const raw = localStorage.getItem(`project_${projectId}_segments`);
+    if (raw) {
+      const cols = JSON.parse(raw);
+      const col = cols[segIdx];
+      if (col?.playRules) {
+        for (const r of col.playRules) {
+          if (r.entityType === "genre" && r.entityValue) genres.push(r.entityValue);
+          if (r.entityType === "subGenre" && r.entityValue) subGenres.push(r.entityValue);
+          if (r.entityType === "theme" && r.entityValue) themes.push(r.entityValue);
+        }
+      }
+    }
+  } catch { /* ignore */ }
+
+  // Game pool keyed by taxonomy tag
+  const POOLS: Record<string, string[]> = {
+    "Action RPG": ["Elden Ring", "Diablo IV", "Path of Exile 2", "The Witcher 3", "Cyberpunk 2077", "Dark Souls III", "Monster Hunter: World", "Dragon's Dogma 2", "Black Myth: Wukong"],
+    "RPG": ["Baldur's Gate 3", "Divinity: Original Sin 2", "Starfield", "Final Fantasy XVI", "Dragon Age: The Veilguard"],
+    "Role Playing": ["Baldur's Gate 3", "Divinity: Original Sin 2", "Starfield", "Persona 5 Royal", "Final Fantasy XVI"],
+    "Action": ["God of War Ragnarök", "Devil May Cry 5", "Sekiro", "Stellar Blade", "Hi-Fi Rush"],
+    "Adventure": ["The Legend of Zelda: Tears of the Kingdom", "Uncharted 4", "A Plague Tale: Requiem", "It Takes Two"],
+    "Strategy": ["Civilization VI", "Total War: Pharaoh", "Age of Empires IV", "Crusader Kings III", "XCOM 2"],
+    "Simulation": ["Microsoft Flight Simulator", "Cities: Skylines II", "Farming Simulator 22", "Planet Coaster 2"],
+    "Souls-like": ["Elden Ring", "Dark Souls III", "Sekiro", "Lies of P", "Nioh 2", "Lords of the Fallen"],
+    "Open World": ["Elden Ring", "Cyberpunk 2077", "Red Dead Redemption 2", "GTA V", "Starfield", "Ghost of Tsushima"],
+    "Dark Fantasy": ["Elden Ring", "Dark Souls III", "Diablo IV", "Baldur's Gate 3", "Path of Exile 2"],
+    "Medieval": ["Kingdom Come: Deliverance", "Mount & Blade II: Bannerlord", "Crusader Kings III", "Medieval Dynasty"],
+    "Fantasy": ["Baldur's Gate 3", "Elden Ring", "The Witcher 3", "Final Fantasy XVI", "Genshin Impact"],
+  };
+  const DEFAULT_GAMES = ["Counter-Strike 2", "Fortnite", "Minecraft", "League of Legends", "GTA V", "Red Dead Redemption 2", "Apex Legends", "Valorant", "Destiny 2", "Overwatch 2", "Palworld", "Stardew Valley", "Terraria", "Dead by Daylight", "Hades II", "Balatro", "Helldivers 2", "Manor Lords", "Satisfactory", "Rocket League", "Roblox", "DOTA 2", "World of Warcraft", "The Sims 4", "Among Us", "Call of Duty: Modern Warfare III", "NBA 2K24", "FIFA 24", "Phasmophobia", "Lethal Company"];
+
+  const relevant = new Set<string>();
+  const allTags = [...genres, ...subGenres, ...themes];
+  for (const tag of allTags) {
+    const pool = POOLS[tag];
+    if (pool) pool.forEach((g) => relevant.add(g));
+  }
+  for (const g of DEFAULT_GAMES) { if (relevant.size >= 30) break; relevant.add(g); }
+  const gameList = Array.from(relevant).slice(0, 30);
+  const am = addressableMarket || 50000;
+
+  const topGames30dPrior = gameList.map((title, i) => ({
+    title,
+    adopterCount: Math.round(am * (0.35 - i * 0.009) * (0.8 + Math.random() * 0.4)),
+  })).sort((a, b) => b.adopterCount - a.adopterCount);
+
+  const overlapIndex30d = gameList.map((title) => {
+    const match = allTags.some((tag) => POOLS[tag]?.includes(title));
+    return { title, overlapIndex: match ? Math.round((8 + Math.random() * 35) * 10) / 10 : Math.round((0.5 + Math.random() * 4) * 10) / 10 };
+  }).sort((a, b) => b.overlapIndex - a.overlapIndex);
+
+  const overlapIndexLifetime = gameList.map((title) => {
+    const match = allTags.some((tag) => POOLS[tag]?.includes(title));
+    return { title, overlapIndex: match ? Math.round((5 + Math.random() * 25) * 10) / 10 : Math.round((0.8 + Math.random() * 3) * 10) / 10 };
+  }).sort((a, b) => b.overlapIndex - a.overlapIndex);
+
+  return { topGames30dPrior, overlapIndex30d, overlapIndexLifetime };
+}
+
 function GeneratedPriorBehaviorSection({
   priorBehavior,
   segColor,
   projectTitle,
+  projectId,
+  segIdx,
+  addressableMarket,
 }: {
-  priorBehavior: NonNullable<import("@/app/api/generate-profile/route").GeneratedProfile["priorBehavior"]>;
+  priorBehavior: import("@/app/api/generate-profile/route").GeneratedProfile["priorBehavior"] | null;
   segColor: string;
   projectTitle: string;
+  projectId: string;
+  segIdx: number;
+  addressableMarket: number;
 }) {
-  const topGames = priorBehavior.topGames30dPrior.slice(0, 20);
-  const overlap30 = priorBehavior.overlapIndex30d.slice(0, 30);
-  const overlapLife = priorBehavior.overlapIndexLifetime.slice(0, 25);
+  // Use provided priorBehavior or generate from segment rules
+  const data = priorBehavior || generateFallbackPriorBehavior(projectId, segIdx, addressableMarket);
+  const topGames = data.topGames30dPrior.slice(0, 20);
+  const overlap30 = data.overlapIndex30d.slice(0, 30);
+  const overlapLife = data.overlapIndexLifetime.slice(0, 25);
 
   return (
     <>
@@ -1849,6 +1926,7 @@ function GeneratedProfileContent({
         <>
           <GeneratedBehavioralSection profile={profile} segColor={segColor} />
           <GeneratedDemographicSection profile={profile} segColor={segColor} />
+          <GeneratedPsychographicSection profile={profile} segColor={segColor} />
           <GeneratedConversionFunnel
             segName={segName}
             addressableMarket={addressableMarket}
@@ -1867,11 +1945,14 @@ function GeneratedProfileContent({
         />
       )}
       {activeSubTab === "prior" && (
-        profile.priorBehavior ? (
-          <GeneratedPriorBehaviorSection priorBehavior={profile.priorBehavior} segColor={segColor} projectTitle={projectTitle} />
-        ) : (
-          <GeneratedPsychographicSection profile={profile} segColor={segColor} />
-        )
+        <GeneratedPriorBehaviorSection
+          priorBehavior={profile.priorBehavior || null}
+          segColor={segColor}
+          projectTitle={projectTitle}
+          projectId={projectId}
+          segIdx={segIdx}
+          addressableMarket={addressableMarket}
+        />
       )}
     </>
   );
