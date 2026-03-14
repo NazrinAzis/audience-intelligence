@@ -272,6 +272,12 @@ export default function NewProjectPage() {
 
   const handleCreate = () => {
     const slug = createProject();
+    // Persist the full segment builder columns to localStorage so the
+    // segments page (and audience/profile pages) can load them.
+    localStorage.setItem(
+      `project_${slug}_segments`,
+      JSON.stringify(segmentColumns)
+    );
     router.push(`/projects/${slug}/audience`);
   };
 
