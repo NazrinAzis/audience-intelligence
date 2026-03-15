@@ -1,8 +1,8 @@
-// ─── Newzoo Game Taxonomy — single source of truth ───
+// ─── Naz Game Taxonomy — single source of truth ───
 // Extracted from:
-//   • Newzoo Taxonomy PowerPoint List.pptx
+//   • Naz Taxonomy PowerPoint List.pptx
 //   • Taxonomy with the List of Subgenres.pdf
-//   • Newzoo_Persona_Handbook.pdf
+//   • Naz_Persona_Handbook.pdf
 
 export const GENRES = [
   "Adventure",
@@ -317,8 +317,8 @@ export const PLAYER_NUMBER = [
   "Single Player",
 ] as const;
 
-// ─── Newzoo Motivational Gamer Personas ───
-// Source: Newzoo Persona Handbook (Global Gamer Study 2025)
+// ─── Naz Motivational Gamer Personas ───
+// Source: Naz Persona Handbook (Global Gamer Study 2025)
 export const PERSONAS = [
   "Builders, Farmers, & Nurturers",
   "Competition Lovers",

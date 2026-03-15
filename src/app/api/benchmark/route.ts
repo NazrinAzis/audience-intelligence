@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
           ...body.rules.moneyRules.map((r) => `monetization: ${r.ruleType}${r.category ? ` category="${formatMultiValue(r.category)}"` : ""}`),
         ].join(", ");
 
-        const prompt = `You are a gaming audience intelligence analyst at Newzoo. Given a game segment definition, estimate benchmark conversion rates based on comparable launched titles.
+        const prompt = `You are a gaming audience intelligence analyst at Naz. Given a game segment definition, estimate benchmark conversion rates based on comparable launched titles.
 
 CONTEXT:
 - Game title: "${body.projectTitle}"

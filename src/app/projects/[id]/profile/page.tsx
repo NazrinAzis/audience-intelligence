@@ -872,7 +872,7 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
           <thead>
             <tr className="border-b border-nz-border">
               <th className="text-left py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">
-                <span className="flex items-center">Region<InfoTooltip text="Geographic region as defined by Newzoo's standard market taxonomy." /></span>
+                <span className="flex items-center">Region<InfoTooltip text="Geographic region as defined by Naz's standard market taxonomy." /></span>
               </th>
               <th className="text-right py-2 px-3 text-xs font-semibold text-nz-text-muted uppercase">
                 <span className="flex items-center justify-end">MAU<InfoTooltip text="Monthly Active Users — the estimated number of players in this segment who are active in this region each month." /></span>

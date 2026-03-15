@@ -267,7 +267,7 @@ export async function POST(request: NextRequest) {
           ...body.rules.moneyRules.map((r) => `monetization: ${r.ruleType}${r.category ? ` category="${formatMultiValue(r.category)}"` : ""}`),
         ].join(", ");
 
-        const prompt = `You are a gaming audience intelligence analyst at Newzoo. Generate a realistic audience profile for a gaming segment.
+        const prompt = `You are a gaming audience intelligence analyst at Naz. Generate a realistic audience profile for a gaming segment.
 
 CONTEXT:
 - Game title: "${body.projectTitle}"

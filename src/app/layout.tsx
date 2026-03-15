@@ -7,8 +7,8 @@ import { LocalStorageMigration } from "@/components/LocalStorageMigration";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Audience Intelligence — Newzoo",
-  description: "Newzoo Audience Intelligence Platform",
+  title: "Audience Intelligence — Naz",
+  description: "Naz Audience Intelligence Platform",
 };
 
 export default function RootLayout({

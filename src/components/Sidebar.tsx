@@ -80,7 +80,7 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 bottom-0 w-[200px] bg-nz-sidebar text-white flex flex-col z-50">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-white/10">
-        <div className="text-lg font-bold tracking-tight">Newzoo</div>
+        <div className="text-lg font-bold tracking-tight">Naz</div>
         <div className="text-[11px] text-[#94A3B8] mt-0.5">Audience Intelligence</div>
       </div>
 
