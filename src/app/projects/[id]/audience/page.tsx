@@ -47,8 +47,8 @@ function lifecyclePillStyle(stage: LifecycleStage): { bg: string; color: string;
   switch (stage) {
     case "greenlight": return { bg: "#FEF3E0", color: "#B96B00" };
     case "prelaunch": return { bg: "#EEF2FF", color: "#4F46E5" };
-    case "launched": return { bg: "#E6FAF7", color: "#007A6E" };
-    case "live": return { bg: "#E6FAF7", color: "#007A6E", pulse: true };
+    case "launched": return { bg: "#00C9A7", color: "#FFFFFF" };
+    case "live": return { bg: "#10B981", color: "#FFFFFF", pulse: true };
   }
 }
 
@@ -547,9 +547,9 @@ function BudgetSplitSection({
   if (allocations.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg border border-nz-border shadow-sm p-4 mb-6">
+    <div className="bg-white rounded-card border border-nz-border p-4 mb-6 shadow-card">
       <div className="flex items-center justify-between mb-1">
-        <h3 className="text-base font-bold text-nz-text">Recommended Budget Split</h3>
+        <h3 className="text-base font-heading font-bold text-nz-text">Recommended Budget Split</h3>
         {showToggle && (
           <div className="flex gap-1">
             {phases.map((p) => (
@@ -558,8 +558,8 @@ function BudgetSplitSection({
                 onClick={() => setPhase(p.id)}
                 className={`px-3 py-1 text-[11px] font-medium rounded-full border transition-colors ${
                   phase === p.id
-                    ? "bg-[#4F46E5] text-white border-[#4F46E5]"
-                    : "bg-white text-[#374151] border-[#E5E7EB] hover:border-[#4F46E5]/40"
+                    ? "bg-nz-primary text-white border-nz-primary"
+                    : "bg-white text-[#374151] border-[#E5E7EB] hover:border-nz-primary/30"
                 }`}
               >
                 {p.label}
@@ -729,7 +729,7 @@ function ExportDropdown({
     <div ref={ref} className="relative print:hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#374151] border border-[#374151]/30 rounded-lg hover:bg-[#F5F6F8] transition-colors"
+        className="flex items-center gap-1.5 px-4 py-2 text-sm font-body font-medium text-nz-text bg-white border border-nz-border rounded-card hover:bg-nz-bg-subtle transition-colors"
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -863,7 +863,7 @@ Include these sections:
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center print:hidden">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col z-10">
+      <div className="relative bg-white rounded-card border border-nz-border-strong w-full max-w-3xl max-h-[90vh] flex flex-col z-10">
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-nz-border shrink-0">
           <div>
@@ -917,7 +917,7 @@ Include these sections:
         <div className="flex items-center justify-end gap-3 p-4 border-t border-nz-border shrink-0">
           <button onClick={handleCopy} disabled={!brief} className="px-4 py-2 text-sm font-medium text-[#374151] border border-nz-border rounded-lg hover:bg-gray-50 disabled:opacity-40">Copy to Clipboard</button>
           <button onClick={handleDownload} disabled={!brief} className="px-4 py-2 text-sm font-medium text-[#374151] border border-nz-border rounded-lg hover:bg-gray-50 disabled:opacity-40">Download as .txt</button>
-          <button onClick={generateBrief} disabled={loading} className="px-4 py-2 text-sm font-medium text-white bg-[#4F46E5] rounded-lg hover:bg-[#3A4AE8] disabled:opacity-60">
+          <button onClick={generateBrief} disabled={loading} className="px-4 py-2 text-sm font-medium text-white bg-nz-primary rounded-lg hover:bg-nz-primary-hover disabled:opacity-60">
             {loading ? "Generating..." : "Regenerate"}
           </button>
         </div>
@@ -1270,7 +1270,7 @@ export default function AudiencePage() {
             />
             <button
               onClick={() => setShowBriefModal(true)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#4F46E5] rounded-lg hover:bg-[#3A4AE8] transition-colors print:hidden"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm font-body font-medium text-white bg-nz-accent rounded-card hover:bg-nz-accent-hover transition-colors print:hidden"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -1284,39 +1284,39 @@ export default function AudiencePage() {
       <div className="p-6">
         {/* Header banner — lifecycle aware */}
         <div
-          className="rounded-xl p-6 mb-6 text-white"
+          className="rounded-card p-6 mb-6 border border-nz-border shadow-card"
           style={{
-            background: "linear-gradient(135deg, #4F46E5 0%, #3644db 50%, #2d38b8 100%)",
+            background: "linear-gradient(135deg, #F0FDF9 0%, #E6FBF5 100%)",
           }}
         >
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs font-medium uppercase tracking-wider text-white/70 mb-1 flex items-center gap-1">
+              <div className="text-xs font-body font-medium uppercase tracking-wider text-nz-text-secondary mb-1 flex items-center gap-1">
                 <MetricTooltip
                   label="Total Addressable Audience (De-duplicated)"
                   definition="De-duplicated count of unique players qualifying for at least one segment."
                   whyItMatters="Your true market ceiling — the maximum you can reach with behavioral targeting."
                 />
               </div>
-              <div className="text-4xl font-bold">
+              <div className="text-4xl font-mono font-semibold tabular-nums text-nz-teal">
                 {formatNumber(totalAddressableAudience)}
               </div>
               {/* Lifecycle-specific sub-line */}
               {isPreLaunchStage(stage) && segs.length > 0 && (
-                <div className="text-sm text-white/80 mt-2">
+                <div className="text-sm font-body text-nz-text-body mt-2">
                   Predicted adopters across all segments: ~{formatNumber(totalPredictedLow)}&ndash;{formatNumber(totalPredictedHigh)}
-                  <span className="text-white/50 ml-2">Based on benchmark conv. rates &middot; {totalComparableTitles} comparable titles</span>
+                  <span className="text-nz-text-muted ml-2">Based on benchmark conv. rates &middot; {totalComparableTitles} comparable titles</span>
                 </div>
               )}
               {!isPreLaunchStage(stage) && segs.length > 0 && (
-                <div className="text-sm text-white/80 mt-2 flex items-center gap-3">
+                <div className="text-sm font-body text-nz-text-body mt-2 flex items-center gap-3">
                   <span>Actual adopters: {formatNumber(totalAdopters)}</span>
-                  <span className="text-white/50">&middot;</span>
-                  <span>Overall conv: {overallActualConv.toFixed(2)}%</span>
+                  <span className="text-nz-text-muted">&middot;</span>
+                  <span>Overall conv: <span className="font-mono">{overallActualConv.toFixed(2)}%</span></span>
                   {overallBenchmarkMid > 0 && (
                     <>
-                      <span className="text-white/50">&middot;</span>
-                      <span style={{ color: vsBenchmark > 0.5 ? "#22C55E" : vsBenchmark < -0.5 ? "#EF4444" : "#9CA3AF" }}>
+                      <span className="text-nz-text-muted">&middot;</span>
+                      <span className="font-mono" style={{ color: vsBenchmark > 0.5 ? "#10B981" : vsBenchmark < -0.5 ? "#EF4444" : "#6B7280" }}>
                         vs benchmark: {vsBenchmark > 0 ? "+" : ""}{vsBenchmark.toFixed(1)}pp {vsBenchmark > 0.5 ? "\u2191" : vsBenchmark < -0.5 ? "\u2193" : ""}
                       </span>
                     </>
@@ -1325,17 +1325,17 @@ export default function AudiencePage() {
               )}
             </div>
             <div className="text-right">
-              <div className="text-xs font-medium uppercase tracking-wider text-white/70 mb-1 flex items-center justify-end gap-1">
+              <div className="text-xs font-body font-medium uppercase tracking-wider text-nz-text-secondary mb-1 flex items-center justify-end gap-1">
                 <MetricTooltip
                   label="Total Tracked Users"
                   definition="Total players in Naz's GPME panel for the selected markets."
                   whyItMatters="The pool your segments were drawn from. Context for understanding market share."
                 />
               </div>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">
                 {formatNumber(totalTrackedUsers)}
               </div>
-              <div className="text-sm text-white/70 mt-1 flex items-center justify-end gap-1">
+              <div className="text-sm font-body text-nz-text-secondary mt-1 flex items-center justify-end gap-1">
                 <MetricTooltip
                   label={`General pop. conv: ${generalPopConversionRate}%`}
                   definition="Conversion rate of the full tracked population, regardless of segment."
@@ -1364,13 +1364,13 @@ export default function AudiencePage() {
               </div>
 
               {/* Priority mode toggle */}
-              <div className="flex items-center gap-1 bg-[#F5F6F8] rounded-full p-0.5">
+              <div className="flex items-center gap-1 bg-nz-bg-subtle rounded-full p-0.5">
                 <button
                   type="button"
                   onClick={() => updatePrioState({ mode: "auto" })}
                   className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-colors ${
                     prioState.mode === "auto"
-                      ? "bg-[#4F46E5] text-white"
+                      ? "bg-nz-primary text-white"
                       : "text-[#374151] hover:text-[#111827]"
                   }`}
                 >
@@ -1386,7 +1386,7 @@ export default function AudiencePage() {
                   }}
                   className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-colors ${
                     prioState.mode === "manual"
-                      ? "bg-[#4F46E5] text-white"
+                      ? "bg-nz-primary text-white"
                       : "text-[#374151] hover:text-[#111827]"
                   }`}
                 >
@@ -1397,8 +1397,8 @@ export default function AudiencePage() {
 
             {/* Info banner */}
             {!prioState.dismissedBanner && (
-              <div className="flex items-start gap-3 px-4 py-3 bg-blue-50 border border-blue-100 rounded-lg">
-                <svg className="w-4 h-4 text-[#4F46E5] mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <div className="flex items-start gap-3 px-4 py-3 bg-nz-primary-light border border-nz-primary/20 rounded-card">
+                <svg className="w-4 h-4 text-nz-primary mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
                 <p className="text-xs text-[#374151] flex-1">
@@ -1425,7 +1425,7 @@ export default function AudiencePage() {
                 <button
                   type="button"
                   onClick={resetToAuto}
-                  className="text-xs text-[#4F46E5] hover:underline"
+                  className="text-xs text-nz-primary hover:underline"
                 >
                   Reset to auto
                 </button>
@@ -1436,8 +1436,8 @@ export default function AudiencePage() {
 
         {/* Bullseye */}
         {segs.length > 0 ? (
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-6 mb-6">
-            <h3 className="text-sm font-semibold text-nz-text mb-2 text-center">
+          <div className="bg-white rounded-card border border-nz-border p-6 mb-6 shadow-card">
+            <h3 className="text-sm font-heading font-semibold text-nz-text mb-2 text-center">
               Audience Segmentation &mdash; Bullseye View
             </h3>
             <BullseyeDiagram
@@ -1451,7 +1451,7 @@ export default function AudiencePage() {
             />
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-8 mb-6 text-center">
+          <div className="bg-white rounded-card border border-nz-border p-8 mb-6 text-center">
             <p className="text-sm text-nz-text-muted">
               Run Analysis in the Segment Builder to generate audience data.
             </p>
@@ -1478,7 +1478,7 @@ export default function AudiencePage() {
             return (
               <div
                 key={seg.id}
-                className={`bg-white rounded-lg border border-nz-border shadow-sm overflow-hidden ${
+                className={`bg-white rounded-card border border-nz-border shadow-card overflow-hidden ${
                   prioState.mode === "manual" ? "cursor-grab active:cursor-grabbing" : ""
                 }`}
                 draggable={prioState.mode === "manual"}
@@ -1497,10 +1497,9 @@ export default function AudiencePage() {
                         </span>
                       )}
                       <span
-                        className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0"
+                        className="text-[10px] font-bold font-body uppercase px-2 py-0.5 rounded-full shrink-0 text-white"
                         style={{
-                          backgroundColor: seg.color + "15",
-                          color: seg.color,
+                          backgroundColor: seg.tier === "Core" ? "#3B82F6" : seg.tier === "Secondary" ? "#00C9A7" : seg.tier === "Tertiary" ? "#F59E0B" : seg.color,
                         }}
                       >
                         {seg.tier}
@@ -1542,7 +1541,7 @@ export default function AudiencePage() {
                       <>
                         {isBenchmarkLoading ? (
                           <div className="flex items-center gap-2 text-sm text-nz-text-muted py-2">
-                            <svg className="animate-spin h-4 w-4 text-[#4F46E5]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-4 w-4 text-nz-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
@@ -1595,7 +1594,7 @@ export default function AudiencePage() {
                               <button
                                 type="button"
                                 onClick={() => setTitlesModalSeg(seg)}
-                                className="font-semibold text-[#4F46E5] hover:underline"
+                                className="font-semibold text-nz-primary hover:underline"
                               >
                                 {(seg.comparableTitles ?? []).length} comparable titles
                               </button>
@@ -1625,7 +1624,7 @@ export default function AudiencePage() {
                       <>
                         {isBenchmarkLoading ? (
                           <div className="flex items-center gap-2 text-sm text-nz-text-muted py-2">
-                            <svg className="animate-spin h-4 w-4 text-[#4F46E5]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-4 w-4 text-nz-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
@@ -1674,7 +1673,7 @@ export default function AudiencePage() {
                               <button
                                 type="button"
                                 onClick={() => setTitlesModalSeg(seg)}
-                                className="font-semibold text-[#4F46E5] hover:underline"
+                                className="font-semibold text-nz-primary hover:underline"
                               >
                                 {(seg.comparableTitles ?? []).length} comparable titles
                               </button>
@@ -1759,7 +1758,7 @@ export default function AudiencePage() {
                     )}
 
                     {/* Priority Score — always shown */}
-                    <div className="flex justify-between text-sm pt-2 border-t border-[#F5F6F8]">
+                    <div className="flex justify-between text-sm pt-2 border-t border-nz-bg-subtle">
                       <span className="text-nz-text-secondary">
                         <MetricTooltip
                           label="Priority Score"
@@ -1771,8 +1770,8 @@ export default function AudiencePage() {
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                           prioState.mode === "manual"
-                            ? "bg-[#F5F6F8] text-[#A0AEC0]"
-                            : "bg-[#F5F6F8] text-[#374151]"
+                            ? "bg-nz-bg-subtle text-[#A0AEC0]"
+                            : "bg-nz-bg-subtle text-[#374151]"
                         }`}
                         title={
                           prioState.mode === "manual"
@@ -1794,7 +1793,7 @@ export default function AudiencePage() {
         {isKcd2 && (
           <>
             {/* Overlap matrix table */}
-            <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+            <div className="bg-white rounded-card border border-nz-border p-5 mb-6">
               <h3 className="text-sm font-semibold text-nz-text mb-4">
                 <MetricTooltip
                   label="Overlap Matrix"
@@ -1868,7 +1867,7 @@ export default function AudiencePage() {
 
             {/* Strategy signals */}
             <div className="grid grid-cols-3 gap-5 mb-5">
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 border-l-4 border-l-nz-primary">
+              <div className="bg-white rounded-card border border-nz-border p-5 border-l-4 border-l-nz-primary">
                 <div className="text-xs font-semibold uppercase text-nz-primary mb-2">
                   Core Segment
                 </div>
@@ -1879,7 +1878,7 @@ export default function AudiencePage() {
                   Cap spend only when this pool is saturated.
                 </p>
               </div>
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 border-l-4 border-l-nz-teal">
+              <div className="bg-white rounded-card border border-nz-border p-5 border-l-4 border-l-nz-teal">
                 <div className="text-xs font-semibold uppercase text-nz-teal mb-2">
                   Secondary Segment
                 </div>
@@ -1889,7 +1888,7 @@ export default function AudiencePage() {
                   enough to be profitable. Activate after Core campaigns show diminishing returns.
                 </p>
               </div>
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 border-l-4 border-l-nz-primary">
+              <div className="bg-white rounded-card border border-nz-border p-5 border-l-4 border-l-nz-primary">
                 <div className="text-xs font-semibold uppercase text-nz-primary mb-2">
                   Triple-Overlap
                 </div>
@@ -1902,7 +1901,7 @@ export default function AudiencePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 gap-5 mb-6">
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 border-l-4 border-l-nz-orange">
+              <div className="bg-white rounded-card border border-nz-border p-5 border-l-4 border-l-nz-orange">
                 <div className="text-xs font-semibold uppercase text-nz-orange mb-2">
                   Tertiary Segment
                 </div>
@@ -1916,7 +1915,7 @@ export default function AudiencePage() {
             </div>
 
             {/* Shared Game Affinity */}
-            <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+            <div className="bg-white rounded-card border border-nz-border p-5 mb-6">
               <h3 className="text-sm font-semibold text-nz-text mb-4">
                 <MetricTooltip
                   label="Shared Game Affinity Across Segments"
@@ -1972,7 +1971,7 @@ export default function AudiencePage() {
             {sectionsLoading && !dynOverlap && (
               <div className="space-y-6 mb-6">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="bg-white rounded-lg border border-nz-border shadow-sm p-5 animate-pulse">
+                  <div key={n} className="bg-white rounded-card border border-nz-border p-5 animate-pulse">
                     <div className="h-4 bg-gray-200 rounded w-40 mb-4" />
                     <div className="space-y-3">
                       <div className="h-3 bg-gray-100 rounded w-full" />
@@ -1980,7 +1979,7 @@ export default function AudiencePage() {
                       <div className="h-3 bg-gray-100 rounded w-4/6" />
                     </div>
                     <div className="flex items-center gap-2 mt-4 text-xs text-nz-text-muted">
-                      <svg className="animate-spin h-3.5 w-3.5 text-[#4F46E5]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-3.5 w-3.5 text-nz-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
@@ -1993,7 +1992,7 @@ export default function AudiencePage() {
 
             {/* Section 1: Overlap Matrix */}
             {dynOverlap && dynOverlap.length > 0 && (
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+              <div className="bg-white rounded-card border border-nz-border p-5 mb-6">
                 <h3 className="text-sm font-semibold text-nz-text mb-4">
                   <MetricTooltip
                     label="Overlap Matrix"
@@ -2094,7 +2093,7 @@ export default function AudiencePage() {
                     {segInsights.map((card, i) => (
                       <div
                         key={i}
-                        className="bg-white rounded-lg border border-nz-border shadow-sm p-5"
+                        className="bg-white rounded-card border border-nz-border p-5"
                         style={{ borderLeftWidth: 4, borderLeftColor: card.color }}
                       >
                         <div className="text-xs font-semibold uppercase mb-2" style={{ color: card.color }}>
@@ -2108,7 +2107,7 @@ export default function AudiencePage() {
                   {overlapInsight && (
                     <div className="grid grid-cols-1 gap-5 mb-6">
                       <div
-                        className="bg-white rounded-lg border border-nz-border shadow-sm p-5"
+                        className="bg-white rounded-card border border-nz-border p-5"
                         style={{ borderLeftWidth: 4, borderLeftColor: overlapInsight.color }}
                       >
                         <div className="text-xs font-semibold uppercase mb-2" style={{ color: overlapInsight.color }}>
@@ -2130,7 +2129,7 @@ export default function AudiencePage() {
 
             {/* Section 3: Shared Game Affinity */}
             {dynAffinity && dynAffinity.length > 0 && (
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+              <div className="bg-white rounded-card border border-nz-border p-5 mb-6">
                 <h3 className="text-sm font-semibold text-nz-text mb-4">
                   <MetricTooltip
                     label="Shared Game Affinity Across Segments"

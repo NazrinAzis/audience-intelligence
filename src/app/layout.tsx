@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { LocalStorageMigration } from "@/components/LocalStorageMigration";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Audience Intelligence — Naz",
@@ -18,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-inter antialiased bg-nz-bg`}>
+      <body className="font-body antialiased bg-nz-bg text-nz-text">
         <div className="flex min-h-screen">
           <Sidebar />
           <LocalStorageMigration />

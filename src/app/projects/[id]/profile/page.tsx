@@ -243,9 +243,9 @@ function BehavioralSection({
       {/* Row 1: Three stat cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* MAU Card */}
-        <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
           <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by GPME individual user data." /></div>
-          <div className="text-2xl font-bold text-nz-text">{formatNumber(data.mau)}</div>
+          <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">{formatNumber(data.mau)}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Total deduplicated MAU for games matching this segment
           </div>
@@ -271,14 +271,14 @@ function BehavioralSection({
         </div>
 
         {/* Avg Monthly Playtime Card */}
-        <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
           <div className="text-xs text-nz-text-muted mb-1 flex items-center">Avg. Monthly Playtime (Hours)<InfoTooltip text="Average hours per month spent playing games that fit this segment's profile. Segment figure vs. platform average shown for context." /></div>
-          <div className="text-2xl font-bold text-nz-text">{data.avgMonthlyPlaytime}</div>
+          <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">{data.avgMonthlyPlaytime}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Hours spent on games fitting this segment, on average
           </div>
           {/* Split bar: segment vs platform avg */}
-          <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div className="relative h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
             <div
               className="absolute inset-y-0 left-0 rounded-full"
               style={{
@@ -307,13 +307,13 @@ function BehavioralSection({
         </div>
 
         {/* Playtime Distribution Card */}
-        <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
           <div className="text-xs text-nz-text-muted mb-3 flex items-center">Playtime Distribution<InfoTooltip text="Share of this segment's players who play more than 1hr / 5hrs / 10hrs / 25hrs / 50hrs per month. Grey = share of total panel. Green = share of this segment." /></div>
           <div className="space-y-1.5">
             {data.playtimeDistribution.map((row) => (
               <div key={row.bucket} className="flex items-center gap-2">
                 <span className="text-[10px] text-nz-text-muted w-10">{row.bucket}</span>
-                <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
+                <div className="flex-1 h-2.5 bg-nz-bg-subtle rounded-full overflow-hidden relative">
                   <div
                     className="absolute inset-y-0 left-0 rounded-full opacity-30"
                     style={{ width: `${row.totalShare}%`, backgroundColor: "#A0AEC0" }}
@@ -343,7 +343,7 @@ function BehavioralSection({
       </div>
 
       {/* Row 2: Taxonomies that resonate - 5 column grid */}
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-6">
         <div className="flex items-center justify-between mb-1">
           <h4 className="text-sm font-semibold text-nz-text flex items-center">
             Taxonomies that resonate with your Segment
@@ -380,7 +380,7 @@ function BehavioralSection({
       </div>
 
       {/* Row 3: Included Games table */}
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-6">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-nz-text">Included Games</h4>
           <div className="flex items-center gap-2">
@@ -427,7 +427,7 @@ function BehavioralSection({
                 const maxMau = Math.max(...data.includedGames.map((g) => g.mau));
                 const mauBarPct = maxMau > 0 ? (game.mau / maxMau) * 100 : 0;
                 return (
-                  <tr key={i} className="border-b border-nz-border last:border-0 hover:bg-nz-bg/50">
+                  <tr key={i} className="border-b border-nz-border last:border-0 hover:bg-nz-bg-subtle/50">
                     <td className="py-2.5 px-3 font-medium text-nz-text text-xs">{game.title}</td>
                     <td className="py-2.5 px-3 text-xs">
                       <span className="text-nz-primary cursor-pointer hover:underline">{game.publisher}</span>
@@ -452,7 +452,7 @@ function BehavioralSection({
                     <td className="py-2.5 px-3 text-right text-nz-text-secondary text-xs">{game.markets}</td>
                     <td className="py-2.5 px-3 text-right">
                       <div className="flex items-center gap-2 justify-end">
-                        <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="w-16 h-1.5 bg-nz-bg-subtle rounded-full overflow-hidden">
                           <div className="h-full rounded-full bg-green-500" style={{ width: `${mauBarPct}%` }} />
                         </div>
                         <span className="text-xs text-nz-text font-medium">{formatNumber(game.mau)}</span>
@@ -508,7 +508,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
 
       <div className="grid grid-cols-2 gap-5 mb-6">
         {/* Age distribution */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
             Age Distribution
           </div>
@@ -540,7 +540,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
         </div>
 
         {/* Gender distribution */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
             Gender Distribution
           </div>
@@ -559,7 +559,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
         </div>
 
         {/* Device ownership */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">
             Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on GHT survey data. Players may own multiple devices." />
           </div>
@@ -570,7 +570,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
                   <span className="text-xs text-nz-text-secondary">{d.device}</span>
                   <span className="text-xs font-semibold text-nz-text">{d.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${d.pct}%`, backgroundColor: DEVICE_COLORS[i] }}
@@ -582,7 +582,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
         </div>
 
         {/* Region distribution */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">
             Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on GHT survey data and GPME geo-IP data." />
           </div>
@@ -593,7 +593,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
                   <span className="text-xs text-nz-text-secondary">{r.region}</span>
                   <span className="text-xs font-semibold text-nz-text">{r.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${r.pct}%`, backgroundColor: segColor }}
@@ -627,7 +627,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
       <div className="grid grid-cols-2 gap-5 mb-6">
         {/* Personas */}
         {personas && personas.length > 0 && (
-          <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+          <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
             <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
               Gamer Persona Distribution
             </div>
@@ -638,7 +638,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
                     <span className="text-xs text-nz-text-secondary">{p.persona}</span>
                     <span className="text-xs font-semibold text-nz-text">{p.pct}%</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${p.pct}%`, backgroundColor: segColor }}
@@ -651,7 +651,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
         )}
 
         {/* Gaming Motivations — segment vs platform avg */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
             Gaming Motivations
           </div>
@@ -669,7 +669,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
                     </span>
                   </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden relative">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden relative">
                   {/* Platform avg marker */}
                   <div
                     className="absolute inset-y-0 w-0.5 bg-gray-400 z-10"
@@ -686,7 +686,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
         </div>
 
         {/* Player Values */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">
             Player Values
           </div>
@@ -697,7 +697,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
                   <span className="text-xs text-nz-text-secondary">{v.value}</span>
                   <span className="text-xs font-semibold text-nz-text">{v.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${v.pct}%`, backgroundColor: segColor }}
@@ -709,7 +709,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
         </div>
 
         {/* Social Platform Affinity */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="flex items-center gap-1 mb-4">
             <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider">
               Social Media Platforms
@@ -720,7 +720,7 @@ function PsychographicSection({ segId, segColor }: { segId: string; segColor: st
             {data.socialPlatforms.map((sp) => (
               <div key={sp.platform} className="flex items-center gap-3">
                 <span className="text-xs text-nz-text-secondary w-20">{sp.platform}</span>
-                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="flex-1 h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${sp.pct}%`, backgroundColor: segColor }}
@@ -755,7 +755,7 @@ function ConversionFunnel({ segId, segColor }: { segId: string; segColor: string
         tooltip="Shows how many players in this segment converted to adopters. Use this to understand your segment&#39;s addressable opportunity and current penetration."
       />
 
-      <div className="bg-white rounded-lg border border-nz-border p-6 mb-6 shadow-sm">
+      <div className="bg-white rounded-card border border-nz-border p-6 mb-6">
         <div className="space-y-3">
           {stages.map((stage, i) => {
             const maxW = 100;
@@ -863,7 +863,7 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
       </p>
 
       {/* Region breakdown table */}
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-5">
         <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
           Top Markets by Monthly Active Users
           <InfoTooltip text="Regions ranked by the number of monthly active users within this segment's addressable market. Powered by GPME regional data. Use this to prioritise which markets to activate first in your media plan." />
@@ -936,7 +936,7 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
       {/* Two separate charts */}
       <div className="grid grid-cols-2 gap-5 mb-5">
         {/* Chart 1: Addressable Market by Region */}
-        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="flex items-center gap-1 mb-4">
             <h3 className="text-sm font-semibold text-nz-text">Addressable Market by Region</h3>
             <InfoTooltip text="Absolute addressable market size per region in this segment. Use alongside % of Segment to compare both relative and absolute opportunity across markets." />
@@ -959,7 +959,7 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
         </div>
 
         {/* Chart 2: Conversion Rate by Region */}
-        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="flex items-center gap-1 mb-4">
             <h3 className="text-sm font-semibold text-nz-text">Conversion Rate by Region</h3>
             <InfoTooltip text="Regions above the line are over-performing. Consider increasing UA spend in these markets." />
@@ -1029,7 +1029,7 @@ function PriorBehaviorSubTab({
 
       <div className="grid grid-cols-2 gap-5 mb-5">
         {/* Chart 1: Top Games Played — uses segment color */}
-        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
             Top Games Played in 30 Days Before Adoption
             <InfoTooltip text="Games most commonly played by this segment in the 30 days before they adopted titles in this category. Use this to identify cross-promotion partners and media targeting opportunities." />
@@ -1064,7 +1064,7 @@ function PriorBehaviorSubTab({
         </div>
 
         {/* Chart 2: Overlap Index 30-Day — purple */}
-        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
             Overlap Index &mdash; 30 Day Prior Window (Top 30)
             <InfoTooltip text="Measures how much more likely players in this segment are to have played each title in the 30 days before adoption, compared to the general panel. A score of 40 means 40x more likely." />
@@ -1101,7 +1101,7 @@ function PriorBehaviorSubTab({
       </div>
 
       {/* Chart 3: Overlap Index Lifetime — different shade */}
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-5">
         <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
           Overlap Index &mdash; Lifetime
           <InfoTooltip text="Same as the 30-day overlap index but across the player's full lifetime history. Useful for identifying deeper genre and franchise affinities beyond the pre-adoption window." />
@@ -1166,9 +1166,9 @@ function GeneratedBehavioralSection({
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* MAU Card */}
-        <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
           <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by GPME individual user data." /></div>
-          <div className="text-2xl font-bold text-nz-text">{formatNumber(profile.mau)}</div>
+          <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">{formatNumber(profile.mau)}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Total deduplicated MAU for games matching this segment
           </div>
@@ -1183,13 +1183,13 @@ function GeneratedBehavioralSection({
         </div>
 
         {/* Avg Monthly Playtime Card */}
-        <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
           <div className="text-xs text-nz-text-muted mb-1 flex items-center">Avg. Monthly Playtime (Hours)<InfoTooltip text="Average hours per month spent playing games that fit this segment's profile. Segment figure vs. platform average shown for context." /></div>
-          <div className="text-2xl font-bold text-nz-text">{profile.avgMonthlyPlaytime}</div>
+          <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">{profile.avgMonthlyPlaytime}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Hours spent on games fitting this segment, on average
           </div>
-          <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div className="relative h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
             <div
               className="absolute inset-y-0 left-0 rounded-full"
               style={{ width: `${Math.min((profile.avgMonthlyPlaytime / 40) * 100, 100)}%`, backgroundColor: segColor }}
@@ -1213,13 +1213,13 @@ function GeneratedBehavioralSection({
         </div>
 
         {/* Playtime Distribution Card */}
-        <div className="bg-white rounded-lg border border-nz-border p-4 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
           <div className="text-xs text-nz-text-muted mb-3 flex items-center">Playtime Distribution<InfoTooltip text="Share of this segment's players who play more than 1hr / 5hrs / 10hrs / 25hrs / 50hrs per month. Grey = share of total panel. Green = share of this segment." /></div>
           <div className="space-y-1.5">
             {profile.playtimeDistribution.map((row) => (
               <div key={row.bucket} className="flex items-center gap-2">
                 <span className="text-[10px] text-nz-text-muted w-10">{row.bucket}</span>
-                <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
+                <div className="flex-1 h-2.5 bg-nz-bg-subtle rounded-full overflow-hidden relative">
                   <div className="absolute inset-y-0 left-0 rounded-full opacity-30" style={{ width: `${row.totalShare}%`, backgroundColor: "#A0AEC0" }} />
                   <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${row.segmentShare}%`, backgroundColor: segColor }} />
                 </div>
@@ -1241,7 +1241,7 @@ function GeneratedBehavioralSection({
       </div>
 
       {/* Taxonomies */}
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-6">
         <h4 className="text-sm font-semibold text-nz-text mb-1 flex items-center">
           Taxonomies that resonate with your Segment
           <InfoTooltip text="Top Genres, Sub-Genres, Game Mechanics, Art Styles, and Themes ranked by MAU among players in this segment. Use this to understand what this audience gravitates toward beyond your title." />
@@ -1285,7 +1285,7 @@ function GeneratedDemographicSection({
       <SectionHeader title="Demographic Profile" subtitle="Lifetime data — does not change by month" badge="LIFETIME" badgeColor="#6B7280" />
       <div className="grid grid-cols-2 gap-5 mb-6">
         {/* Age */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Age Distribution<InfoTooltip text="Lifetime age breakdown of players in this segment based on GHT survey data. Does not change by month." /></div>
           <div className="flex items-end gap-2 h-32">
             {profile.age.map((a, i) => {
@@ -1301,7 +1301,7 @@ function GeneratedDemographicSection({
           </div>
         </div>
         {/* Gender */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Gender Distribution<InfoTooltip text="Lifetime gender breakdown of players in this segment based on GHT survey data. Does not change by month." /></div>
           <div className="flex items-center gap-5">
             <DonutChart data={profile.gender} colors={GENDER_COLORS} />
@@ -1317,7 +1317,7 @@ function GeneratedDemographicSection({
           </div>
         </div>
         {/* Devices */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on GHT survey data. Players may own multiple devices." /></div>
           <div className="space-y-3">
             {profile.devices.map((d, i) => (
@@ -1326,7 +1326,7 @@ function GeneratedDemographicSection({
                   <span className="text-xs text-nz-text-secondary">{d.device}</span>
                   <span className="text-xs font-semibold text-nz-text">{d.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${d.pct}%`, backgroundColor: DEVICE_COLORS[i] }} />
                 </div>
               </div>
@@ -1334,7 +1334,7 @@ function GeneratedDemographicSection({
           </div>
         </div>
         {/* Regions */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on GHT survey data and GPME geo-IP data." /></div>
           <div className="space-y-3">
             {profile.regions.map((r) => (
@@ -1343,7 +1343,7 @@ function GeneratedDemographicSection({
                   <span className="text-xs text-nz-text-secondary">{r.region}</span>
                   <span className="text-xs font-semibold text-nz-text">{r.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${r.pct}%`, backgroundColor: segColor }} />
                 </div>
               </div>
@@ -1368,7 +1368,7 @@ function GeneratedPsychographicSection({
       <div className="grid grid-cols-2 gap-5 mb-6">
         {/* Personas */}
         {profile.personas?.length > 0 && (
-          <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+          <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
             <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Gamer Persona Distribution</div>
             <div className="space-y-3">
               {profile.personas.map((p) => (
@@ -1377,7 +1377,7 @@ function GeneratedPsychographicSection({
                     <span className="text-xs text-nz-text-secondary">{p.persona}</span>
                     <span className="text-xs font-semibold text-nz-text">{p.pct}%</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                     <div className="h-full rounded-full" style={{ width: `${p.pct}%`, backgroundColor: segColor }} />
                   </div>
                 </div>
@@ -1386,7 +1386,7 @@ function GeneratedPsychographicSection({
           </div>
         )}
         {/* Motivations */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Gaming Motivations</div>
           <div className="space-y-3">
             {profile.motivations.map((m) => (
@@ -1398,7 +1398,7 @@ function GeneratedPsychographicSection({
                     <span className="text-xs font-semibold" style={{ color: segColor }}>{m.segmentScore}</span>
                   </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden relative">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden relative">
                   <div className="absolute inset-y-0 w-0.5 bg-gray-400 z-10" style={{ left: `${m.platformAvg}%` }} />
                   <div className="h-full rounded-full" style={{ width: `${m.segmentScore}%`, backgroundColor: segColor }} />
                 </div>
@@ -1407,7 +1407,7 @@ function GeneratedPsychographicSection({
           </div>
         </div>
         {/* Player Values */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4">Player Values</div>
           <div className="space-y-3">
             {profile.playerValues.map((v) => (
@@ -1416,7 +1416,7 @@ function GeneratedPsychographicSection({
                   <span className="text-xs text-nz-text-secondary">{v.value}</span>
                   <span className="text-xs font-semibold text-nz-text">{v.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${v.pct}%`, backgroundColor: segColor }} />
                 </div>
               </div>
@@ -1424,7 +1424,7 @@ function GeneratedPsychographicSection({
           </div>
         </div>
         {/* Social Platforms */}
-        <div className="bg-white rounded-lg border border-nz-border p-5 shadow-sm">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="flex items-center gap-1 mb-4">
             <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider">Social Media Platforms</div>
             <InfoTooltip text="Use this to inform your content and influencer marketing channel strategy" />
@@ -1433,7 +1433,7 @@ function GeneratedPsychographicSection({
             {profile.socialPlatforms.map((sp) => (
               <div key={sp.platform} className="flex items-center gap-3">
                 <span className="text-xs text-nz-text-secondary w-20">{sp.platform}</span>
-                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="flex-1 h-2 bg-nz-bg-subtle rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width: `${sp.pct}%`, backgroundColor: segColor }} />
                 </div>
                 <span className="text-xs font-semibold text-nz-text w-8 text-right">{sp.pct}%</span>
@@ -1545,7 +1545,7 @@ function GeneratedPriorBehaviorSection({
       </p>
 
       <div className="grid grid-cols-2 gap-5 mb-5">
-        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
             Top Games Played in 30 Days Before Adoption
             <InfoTooltip text="Games most commonly played by this segment in the 30 days before they adopted titles in this category. Use this to identify cross-promotion partners and media targeting opportunities." />
@@ -1570,7 +1570,7 @@ function GeneratedPriorBehaviorSection({
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5">
+        <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
             Overlap Index &mdash; 30 Day Prior Window (Top 30)
             <InfoTooltip text="Measures how much more likely players in this segment are to have played each title in the 30 days before adoption, compared to the general panel. A score of 40 means 40x more likely." />
@@ -1597,7 +1597,7 @@ function GeneratedPriorBehaviorSection({
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-5">
         <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
           Overlap Index &mdash; Lifetime
           <InfoTooltip text="Same as the 30-day overlap index but across the player's full lifetime history. Useful for identifying deeper genre and franchise affinities beyond the pre-adoption window." />
@@ -1671,7 +1671,7 @@ function GeneratedConversionFunnel({
   return (
     <>
       <SectionHeader title="Conversion Funnel" tooltip={funnelTooltip} />
-      <div className="bg-white rounded-lg border border-nz-border p-6 mb-6 shadow-sm">
+      <div className="bg-white rounded-card border border-nz-border p-6 mb-6">
         <div className="space-y-3">
           {stages.map((stage, i) => {
             const widthPct = i === 0 ? 100 : Math.max((stage.value / stages[0].value) * 100, 6);
@@ -1740,7 +1740,7 @@ function GeneratedRegionSection({
       <p className="text-sm text-nz-text-secondary mb-5">
         Geographic distribution of this segment&apos;s addressable market by region.
       </p>
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-5">
         <h3 className="text-sm font-semibold text-nz-text mb-1">Top Markets by Monthly Active Users</h3>
         <p className="text-xs text-nz-text-muted mb-4">Share of segment&apos;s addressable market by region</p>
         <table className="w-full text-sm">
@@ -1759,7 +1759,7 @@ function GeneratedRegionSection({
                 <td className="py-3 px-3 text-right text-nz-text">{formatNumber(row.mau)}</td>
                 <td className="py-3 px-3 text-right text-nz-text">{row.pct}%</td>
                 <td className="py-3 px-3">
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-3 bg-nz-bg-subtle rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${(row.mau / maxMau) * 100}%`, backgroundColor: segColor }}
@@ -1772,7 +1772,7 @@ function GeneratedRegionSection({
         </table>
       </div>
       {/* Bar chart */}
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-5">
+      <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-5">
         <h3 className="text-sm font-semibold text-nz-text mb-4">Addressable Market by Region</h3>
         <div style={{ height: 250 }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -1893,7 +1893,7 @@ function GeneratedProfileContent({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-12 text-center">
+      <div className="bg-white rounded-card border border-nz-border p-12 text-center">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mb-4">
           <svg className="w-6 h-6 text-nz-primary animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -1908,7 +1908,7 @@ function GeneratedProfileContent({
 
   if (error || !profile) {
     return (
-      <div className="bg-white rounded-lg border border-nz-border shadow-sm p-8 text-center">
+      <div className="bg-white rounded-card border border-nz-border p-8 text-center">
         <p className="text-sm text-red-500 mb-3">{error || "Failed to generate profile"}</p>
         <button
           onClick={generateProfile}
@@ -2098,7 +2098,7 @@ export default function ProfilePage() {
             )}
           </>
         ) : !activeSeg || projectSegments.length === 0 ? (
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-8 text-center">
+          <div className="bg-white rounded-card border border-nz-border p-8 text-center">
             <h3 className="text-sm font-semibold text-nz-text mb-2">No segments defined</h3>
             <p className="text-sm text-nz-text-muted">
               Go to the Segment Builder to create and analyze segments for this project.
@@ -2120,7 +2120,7 @@ export default function ProfilePage() {
             activeSubTab={activeSubTab}
           />
         ) : (
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-8 text-center">
+          <div className="bg-white rounded-card border border-nz-border p-8 text-center">
             <div className="mb-3">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100">
                 <svg className="w-6 h-6 text-nz-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">

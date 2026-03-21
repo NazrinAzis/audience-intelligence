@@ -1,11 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: "Inter", sans-serif;
-  background: #F5F6F8;
-  color: #111827;
+  font-family: "DM Sans", sans-serif;
+  background: #F9FAFB;
+  color: #1A1F36;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Sora", sans-serif;
 }
 
 /* Custom scrollbar */
@@ -13,9 +19,20 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F6F8;
+  background: #F9FAFB;
 }
 ::-webkit-scrollbar-thumb {
   background: #E5E7EB;
   border-radius: 3px;
+}
+
+/* Utility classes for the design system fonts */
+.font-heading {
+  font-family: "Sora", sans-serif;
+}
+.font-body {
+  font-family: "DM Sans", sans-serif;
+}
+.font-mono {
+  font-family: "Fira Code", monospace;
 }

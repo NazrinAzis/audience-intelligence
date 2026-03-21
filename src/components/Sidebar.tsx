@@ -14,16 +14,6 @@ const icons: Record<string, React.ReactNode> = {
       <path d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
     </svg>
   ),
-  users: (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  ),
-  chart: (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-  ),
   eye: (
     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -55,17 +45,14 @@ export function Sidebar() {
   const pathname = usePathname();
   const isProjectPage = pathname.startsWith("/projects/") && !pathname.endsWith("/new");
 
-  // Extract project ID from URL
   const projectId = isProjectPage ? pathname.split("/")[2] : null;
 
-  // Look up project title from store
   const projectTitle = useProjectStore((s) => {
     if (!projectId) return "Project";
     const found = s.projects.find((p) => p.id === projectId);
     return found?.title ?? "Project";
   });
 
-  // Build dynamic project nav
   const projectNav = projectId
     ? [
         { label: "Overview", href: `/projects/${projectId}/audience`, icon: "eye" },
@@ -77,16 +64,63 @@ export function Sidebar() {
     : [];
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-[200px] bg-nz-sidebar text-white flex flex-col z-50">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-white/10">
-        <div className="text-lg font-bold tracking-tight">Naz</div>
-        <div className="text-[11px] text-[#94A3B8] mt-0.5">Audience Intelligence</div>
+    <aside
+      className="fixed left-0 top-0 bottom-0 w-[200px] flex flex-col z-50"
+      style={{
+        backgroundColor: "#F9FAFB",
+        borderRight: "1px solid #E5E7EB",
+      }}
+    >
+      {/* User header with avatar */}
+      <div
+        className="flex items-center gap-2.5 px-4 py-5"
+        style={{ borderBottom: "1px solid #E5E7EB" }}
+      >
+        {/* "N" avatar */}
+        <div
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 6,
+            backgroundColor: "#1A1F36",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ color: "#FFFFFF", fontSize: 13, fontWeight: 700, fontFamily: "Sora, sans-serif" }}>
+            N
+          </span>
+        </div>
+        <div>
+          <div
+            className="font-heading"
+            style={{ fontSize: 14, fontWeight: 600, color: "#1A1F36", lineHeight: 1.2 }}
+          >
+            Naz
+          </div>
+          <div
+            className="font-body"
+            style={{ fontSize: 12, color: "#6B7280", lineHeight: 1.2 }}
+          >
+            Audience Intelligence
+          </div>
+        </div>
       </div>
 
       {/* Workspace nav */}
-      <div className="mt-4 px-2">
-        <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-nz-green mb-2">
+      <div>
+        <div
+          className="font-body uppercase"
+          style={{
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: "0.08em",
+            color: "#6B7280",
+            padding: "16px 16px 4px 16px",
+          }}
+        >
           Workspace
         </div>
         {workspaceNav.map((item) => {
@@ -95,11 +129,27 @@ export function Sidebar() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] transition-colors mb-0.5 ${
-                active
-                  ? "text-white font-medium"
-                  : "text-[#94A3B8] hover:text-white"
-              }`}
+              className="flex items-center gap-2.5 font-body transition-colors"
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                padding: "8px 16px",
+                color: active ? "#00C9A7" : "#6B7280",
+                backgroundColor: active ? "rgba(0,201,167,0.08)" : "transparent",
+                borderLeft: active ? "3px solid #00C9A7" : "3px solid transparent",
+              }}
+              onMouseEnter={(e) => {
+                if (!active) {
+                  e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.03)";
+                  e.currentTarget.style.color = "#1A1F36";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!active) {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "#6B7280";
+                }
+              }}
             >
               {icons[item.icon]}
               {item.label}
@@ -108,10 +158,19 @@ export function Sidebar() {
         })}
       </div>
 
-      {/* Project nav — only when inside a project */}
+      {/* Project nav */}
       {isProjectPage && (
-        <div className="mt-4 px-2">
-          <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-nz-green mb-1">
+        <div>
+          <div
+            className="font-body uppercase"
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              color: "#6B7280",
+              padding: "16px 16px 4px 16px",
+            }}
+          >
             {projectTitle}
           </div>
           {projectNav.map((item) => {
@@ -120,11 +179,27 @@ export function Sidebar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] transition-colors mb-0.5 ${
-                  active
-                    ? "text-white font-medium"
-                    : "text-[#94A3B8] hover:text-white"
-                }`}
+                className="flex items-center gap-2.5 font-body transition-colors"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 400,
+                  padding: "8px 16px",
+                  color: active ? "#00C9A7" : "#6B7280",
+                  backgroundColor: active ? "rgba(0,201,167,0.08)" : "transparent",
+                  borderLeft: active ? "3px solid #00C9A7" : "3px solid transparent",
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) {
+                    e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.03)";
+                    e.currentTarget.style.color = "#1A1F36";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = "#6B7280";
+                  }
+                }}
               >
                 {icons[item.icon]}
                 {item.label}
@@ -134,9 +209,17 @@ export function Sidebar() {
         </div>
       )}
 
-      {/* Bottom */}
-      <div className="mt-auto px-5 py-4 border-t border-white/10">
-        <div className="text-[11px] text-white/30">v2.4.0</div>
+      {/* Version label */}
+      <div
+        className="mt-auto font-body"
+        style={{
+          padding: "16px",
+          borderTop: "1px solid #E5E7EB",
+          fontSize: 11,
+          color: "#9CA3AF",
+        }}
+      >
+        v2.4.0
       </div>
     </aside>
   );

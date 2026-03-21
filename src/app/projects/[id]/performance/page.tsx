@@ -330,7 +330,7 @@ function StatusBadge({ type }: { type: "projected" | "actual" }) {
 
 function ChartSkeleton() {
   return (
-    <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6 animate-pulse">
+    <div className="bg-white rounded-card border border-nz-border p-5 mb-6 shadow-card animate-pulse">
       <div className="h-4 bg-gray-200 rounded w-48 mb-4" />
       <div className="h-[300px] bg-gray-100 rounded" />
     </div>
@@ -573,7 +573,7 @@ export default function PerformancePage() {
           title="Performance & Benchmarking"
         />
         <div className="p-6">
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-12 text-center">
+          <div className="bg-white rounded-card border border-nz-border p-12 text-center">
             <svg className="w-12 h-12 text-nz-text-muted mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -583,7 +583,7 @@ export default function PerformancePage() {
             </p>
             <Link
               href={`/projects/${projectId}/segments`}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#4F46E5] rounded-lg hover:bg-[#3A48E0] transition-colors"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-nz-primary rounded-lg hover:bg-nz-primary-hover transition-colors"
             >
               Go to Segment Builder
             </Link>
@@ -610,8 +610,8 @@ export default function PerformancePage() {
                 onClick={() => setTimeRange(range)}
                 className={`px-3 py-1.5 text-[11px] font-medium rounded-full border transition-colors ${
                   timeRange === range
-                    ? "bg-[#EEF2FF] text-[#4F46E5] border-[#4F46E5]"
-                    : "bg-white text-[#4A5568] border-[#E5E7EB] hover:border-[#4F46E5]/40"
+                    ? "bg-nz-primary-light text-nz-primary-text border-nz-primary"
+                    : "bg-white text-[#4A5568] border-nz-border hover:border-nz-primary/30"
                 }`}
               >
                 {range}
@@ -660,7 +660,7 @@ export default function PerformancePage() {
             {/* ═══════════════════════════════════════════════════
                 CHART 1: Cumulative Adoption Share by Segment
             ═══════════════════════════════════════════════════ */}
-            <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+            <div className="bg-white rounded-card border border-nz-border p-5 mb-6 shadow-card">
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-sm font-semibold text-nz-text">
                   <MetricTooltip
@@ -677,8 +677,8 @@ export default function PerformancePage() {
                       onClick={() => setShowBenchmarkBand(!showBenchmarkBand)}
                       className={`px-2.5 py-1 text-[10px] font-medium rounded-full border transition-colors ${
                         showBenchmarkBand
-                          ? "bg-[#EEF2FF] text-[#4F46E5] border-[#4F46E5]"
-                          : "bg-white text-[#4A5568] border-[#E5E7EB] hover:border-[#4F46E5]/40"
+                          ? "bg-nz-primary text-white border-nz-primary"
+                          : "bg-white text-[#4A5568] border-nz-border hover:border-nz-primary/30"
                       }`}
                     >
                       {showBenchmarkBand ? "Hide" : "Show"} Benchmark Band
@@ -801,7 +801,7 @@ export default function PerformancePage() {
                 CHART 2: KCD2 Benchmarking (only for kcd2)
             ═══════════════════════════════════════════════════ */}
             {(isKcd2 || dynamicBenchmarkInfo) && (
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+              <div className="bg-white rounded-card border border-nz-border p-5 mb-6 shadow-card">
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-sm font-semibold text-nz-text">
                     Core Segment vs. Category &amp; Comparators{!isLaunched ? " (Predicted)" : ""}
@@ -856,7 +856,7 @@ export default function PerformancePage() {
                 CHART 3: Daily New Adopters by Segment
             ═══════════════════════════════════════════════════ */}
             {(projectedData || isKcd2) && (
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+              <div className="bg-white rounded-card border border-nz-border p-5 mb-6 shadow-card">
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-sm font-semibold text-nz-text">
                     <MetricTooltip
@@ -932,7 +932,7 @@ export default function PerformancePage() {
                 MILESTONE TABLE
             ═══════════════════════════════════════════════════ */}
             {milestoneData.length > 0 && (
-              <div className="bg-white rounded-lg border border-nz-border shadow-sm p-5 mb-6">
+              <div className="bg-white rounded-card border border-nz-border p-5 mb-6 shadow-card">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-nz-text">
                     <MetricTooltip

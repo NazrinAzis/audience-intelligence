@@ -94,10 +94,10 @@ function MarketSelector({
             key={l}
             type="button"
             onClick={() => { setLevel(l); setOpen(l !== "global"); if (l === "global") { onChange(multiSelect ? [] : "Global"); } }}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
               level === l
                 ? "bg-nz-primary text-white border-nz-primary"
-                : "bg-white text-nz-text-secondary border-nz-border hover:border-nz-primary/40"
+                : "bg-white text-nz-text-secondary border-nz-border hover:border-nz-primary/30"
             }`}
           >
             {l.charAt(0).toUpperCase() + l.slice(1)}
@@ -334,7 +334,7 @@ export default function NewProjectPage() {
         </div>
 
         {step === 1 && (
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-6 space-y-6">
+          <div className="bg-white rounded-card border border-nz-border p-6 space-y-6">
             {/* Lifecycle Stage */}
             <div>
               <label className="block text-sm font-medium text-nz-text mb-2">
@@ -346,10 +346,10 @@ export default function NewProjectPage() {
                     key={opt}
                     type="button"
                     onClick={() => setWizardField("lifecycle", opt)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md border transition-all ${
+                    className={`px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
                       lifecycle === opt
                         ? "bg-nz-primary text-white border-nz-primary"
-                        : "bg-white text-nz-text border-nz-border hover:border-nz-primary/40"
+                        : "bg-white text-nz-text border-nz-border hover:border-nz-primary/30"
                     }`}
                   >
                     {opt}
@@ -379,10 +379,10 @@ export default function NewProjectPage() {
                     key={opt.label}
                     type="button"
                     onClick={() => setWizardField("monetization", opt.label)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md border transition-all ${
+                    className={`px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
                       monetization === opt.label
                         ? "bg-nz-primary text-white border-nz-primary"
-                        : "bg-white text-nz-text border-nz-border hover:border-nz-primary/40"
+                        : "bg-white text-nz-text border-nz-border hover:border-nz-primary/30"
                     }`}
                   >
                     {opt.label}
@@ -406,7 +406,7 @@ export default function NewProjectPage() {
                 value={gameTitle}
                 onChange={(e) => setWizardField("gameTitle", e.target.value)}
                 placeholder="e.g. Ironveil: Age of Embers"
-                className="w-full px-3 py-2 text-sm border border-nz-border rounded-md focus:outline-none focus:ring-2 focus:ring-nz-primary/20 focus:border-nz-primary"
+                className="w-full px-3 py-2 text-sm border border-nz-border rounded-lg focus:outline-none focus:ring-2 focus:ring-nz-primary/15 focus:border-nz-primary"
               />
             </div>
 
@@ -418,7 +418,7 @@ export default function NewProjectPage() {
                 value={projectName}
                 onChange={(e) => setWizardField("projectName", e.target.value)}
                 placeholder="Internal project name"
-                className="w-full px-3 py-2 text-sm border border-nz-border rounded-md focus:outline-none focus:ring-2 focus:ring-nz-primary/20 focus:border-nz-primary"
+                className="w-full px-3 py-2 text-sm border border-nz-border rounded-lg focus:outline-none focus:ring-2 focus:ring-nz-primary/15 focus:border-nz-primary"
               />
             </div>
 
@@ -430,7 +430,7 @@ export default function NewProjectPage() {
                   <select
                     value={launchMonth}
                     onChange={(e) => setWizardField("launchMonth", e.target.value)}
-                    className="px-3 py-2 text-sm border border-nz-border rounded-md focus:outline-none focus:ring-2 focus:ring-nz-primary/20 focus:border-nz-primary bg-white"
+                    className="px-3 py-2 text-sm border border-nz-border rounded-lg focus:outline-none focus:ring-2 focus:ring-nz-primary/15 focus:border-nz-primary bg-white"
                   >
                     <option value="">Month</option>
                     {months.map((m) => (
@@ -440,7 +440,7 @@ export default function NewProjectPage() {
                   <select
                     value={launchYear}
                     onChange={(e) => setWizardField("launchYear", e.target.value)}
-                    className="px-3 py-2 text-sm border border-nz-border rounded-md focus:outline-none focus:ring-2 focus:ring-nz-primary/20 focus:border-nz-primary bg-white"
+                    className="px-3 py-2 text-sm border border-nz-border rounded-lg focus:outline-none focus:ring-2 focus:ring-nz-primary/15 focus:border-nz-primary bg-white"
                   >
                     <option value="">Year</option>
                     {years.map((y) => (
@@ -463,7 +463,7 @@ export default function NewProjectPage() {
                     className={`px-3 py-1.5 text-sm font-medium rounded-full border transition-all ${
                       platforms.includes(p)
                         ? "bg-nz-primary text-white border-nz-primary"
-                        : "bg-white text-nz-text-secondary border-nz-border hover:border-nz-primary/40"
+                        : "bg-white text-nz-text-secondary border-nz-border hover:border-nz-primary/30"
                     }`}
                   >
                     {p}
@@ -492,7 +492,7 @@ export default function NewProjectPage() {
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="px-6 py-2.5 bg-nz-primary text-white text-sm font-medium rounded-md hover:bg-nz-primary/90 transition-colors"
+                className="px-6 py-2.5 bg-nz-accent text-white text-sm font-body font-medium rounded-card hover:bg-nz-accent-hover transition-colors"
               >
                 Save &amp; Continue &rarr;
               </button>
@@ -503,7 +503,7 @@ export default function NewProjectPage() {
         {step === 2 && (
           <div>
             {/* Info banner */}
-            <div className="flex items-start gap-3 px-4 py-3 bg-blue-50 border border-blue-100 rounded-lg mb-5">
+            <div className="flex items-start gap-3 px-4 py-3 bg-nz-primary-light border border-nz-primary/20 rounded-card mb-5">
               <svg className="w-5 h-5 text-nz-primary mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
@@ -523,14 +523,14 @@ export default function NewProjectPage() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-4 py-2 text-sm text-nz-text-secondary border border-nz-border rounded-md hover:bg-nz-bg"
+                className="px-4 py-2 text-sm text-nz-text-secondary border border-nz-border rounded-lg hover:bg-nz-bg-subtle"
               >
                 &larr; Back
               </button>
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="px-6 py-2.5 bg-nz-primary text-white text-sm font-medium rounded-md hover:bg-nz-primary/90 transition-colors"
+                className="px-6 py-2.5 bg-nz-accent text-white text-sm font-body font-medium rounded-card hover:bg-nz-accent-hover transition-colors"
               >
                 Continue &rarr;
               </button>
@@ -539,7 +539,7 @@ export default function NewProjectPage() {
         )}
 
         {step === 3 && (
-          <div className="bg-white rounded-lg border border-nz-border shadow-sm p-6">
+          <div className="bg-white rounded-card border border-nz-border p-6">
             <h3 className="text-lg font-semibold text-nz-text mb-6">Review Project</h3>
 
             {/* Project details */}
@@ -622,14 +622,14 @@ export default function NewProjectPage() {
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="px-4 py-2 text-sm text-nz-text-secondary border border-nz-border rounded-md hover:bg-nz-bg"
+                className="px-4 py-2 text-sm text-nz-text-secondary border border-nz-border rounded-lg hover:bg-nz-bg-subtle"
               >
                 &larr; Back
               </button>
               <button
                 type="button"
                 onClick={handleCreate}
-                className="px-6 py-2.5 bg-nz-primary text-white text-sm font-medium rounded-md hover:bg-nz-primary/90 transition-colors"
+                className="px-6 py-2.5 bg-nz-accent text-white text-sm font-body font-medium rounded-card hover:bg-nz-accent-hover transition-colors"
               >
                 Create Project &rarr;
               </button>
