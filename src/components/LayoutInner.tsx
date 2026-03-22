@@ -7,7 +7,7 @@ export function LayoutInner({ children }: { children: React.ReactNode }) {
   const { hasProjectModel } = useVersion();
 
   return (
-    <main className={`flex-1 min-h-screen ${hasProjectModel ? "ml-[200px]" : ""}`}>
+    <main className={`flex-1 min-w-0 min-h-screen ${hasProjectModel ? "ml-[200px]" : ""}`}>
       <VersionBanner />
       {children}
     </main>

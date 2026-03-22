@@ -1543,7 +1543,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
         </div>
       </div>
 
-      <div className={isSingle ? "max-w-xl" : "flex gap-5 overflow-x-auto pb-4"}>
+      <div className={isSingle ? "max-w-xl" : "flex flex-row gap-4 overflow-x-auto pb-4"}>
         {columns.map((col, colIdx) => {
           const liveEstimate = estimateSegmentSize(col);
           const tier = tierAssignments[colIdx];
@@ -1564,7 +1564,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
           return (
             <div
               key={colIdx}
-              className={`bg-white rounded-card border border-nz-border shadow-card overflow-hidden ${isSingle ? "" : "flex-none min-w-[280px] w-72"}`}
+              className={`bg-white rounded-card border border-nz-border shadow-card ${isSingle ? "" : "flex-shrink-0 w-[300px]"}`}
             >
               {/* Top color bar */}
               <div className="h-1" style={{ backgroundColor: tier.color }} />
