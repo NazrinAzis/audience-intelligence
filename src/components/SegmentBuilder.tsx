@@ -1368,13 +1368,8 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
     updateCol(colIdx, { suggestedName: "" });
   };
 
-  // Grid class based on column count
-  const gridClass =
-    columns.length === 1 ? "grid-cols-1 max-w-xl" :
-    columns.length === 2 ? "grid-cols-2 max-w-3xl" :
-    columns.length === 3 ? "grid-cols-3" :
-    columns.length === 4 ? "grid-cols-4" :
-    "grid-cols-5";
+  // Single segment uses full width; multi-segment uses horizontal scroll
+  const isSingle = columns.length === 1;
 
   // AI mode state (V5 only)
   const [aiMode, setAiMode] = useState(false);
@@ -1548,7 +1543,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
         </div>
       </div>
 
-      <div className={`grid ${gridClass} gap-5`}>
+      <div className={isSingle ? "max-w-xl" : "flex gap-5 overflow-x-auto pb-4"}>
         {columns.map((col, colIdx) => {
           const liveEstimate = estimateSegmentSize(col);
           const tier = tierAssignments[colIdx];
@@ -1569,7 +1564,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
           return (
             <div
               key={colIdx}
-              className="bg-white rounded-card border border-nz-border shadow-card overflow-hidden"
+              className={`bg-white rounded-card border border-nz-border shadow-card overflow-hidden ${isSingle ? "" : "flex-none min-w-[280px] w-72"}`}
             >
               {/* Top color bar */}
               <div className="h-1" style={{ backgroundColor: tier.color }} />
