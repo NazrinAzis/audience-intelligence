@@ -1171,7 +1171,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
   const [gamesModalCol, setGamesModalCol] = useState<number | null>(null);
   const [showCompare, setShowCompare] = useState(false);
   const [notesOpen, setNotesOpen] = useState<Record<number, boolean>>({});
-  const { isDimVisible, showAIMode, hasMultiSegment } = useVersion();
+  const { isDimVisible, hasMultiSegment } = useVersion();
 
   const tierAssignments = assignTiers(columns);
   const analyzedCount = columns.filter((c) => c.analyzed).length;
@@ -1372,144 +1372,8 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
   const isSingle = columns.length === 1;
 
   // AI mode state (V5 only)
-  const [aiMode, setAiMode] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-
-  const handleAiGenerate = async () => {
-    if (!aiPrompt.trim() || aiLoading) return;
-    setAiLoading(true);
-    setAiError(null);
-    try {
-      const res = await fetch("/api/ai-segment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: aiPrompt, version: "v5" }),
-      });
-      if (!res.ok) throw new Error("AI generation failed");
-      const data = await res.json();
-      // Auto-populate first segment column with AI results
-      const col = { ...columns[0] };
-      if (data.whatTheyPlay) {
-        const rules: QueryRule[] = [];
-        if (data.whatTheyPlay.genre) {
-          rules.push({ ...emptyRule(), entityType: "genre", entityValue: data.whatTheyPlay.genre });
-        }
-        if (data.whatTheyPlay.subGenre) {
-          rules.push({ ...emptyRule(), entityType: "subGenre", entityValue: data.whatTheyPlay.subGenre });
-        }
-        if (rules.length > 0) col.playRules = rules;
-      }
-      if (data.whoTheyAre) {
-        const demoRules: DemographicRule[] = [];
-        let demoId = 100;
-        if (data.whoTheyAre.ageRange) demoRules.push({ id: demoId++, attribute: "age", value: data.whoTheyAre.ageRange });
-        if (data.whoTheyAre.gender) demoRules.push({ id: demoId++, attribute: "gender", value: data.whoTheyAre.gender });
-        if (data.whoTheyAre.region) demoRules.push({ id: demoId++, attribute: "region", value: data.whoTheyAre.region });
-        if (demoRules.length > 0) col.demoRules = demoRules;
-      }
-      if (data.whyTheyPlay) {
-        const psychoRules: PsychographicRule[] = [];
-        let psychoId = 200;
-        if (data.whyTheyPlay.motivation) psychoRules.push({ id: psychoId++, attribute: "motivation", value: data.whyTheyPlay.motivation });
-        if (psychoRules.length > 0) col.psychoRules = psychoRules;
-      }
-      if (data.whatTheyPay) {
-        const moneyRules: MonetizationRule[] = [];
-        let moneyId = 300;
-        if (data.whatTheyPay.spendingTier) {
-          moneyRules.push({
-            id: moneyId++,
-            ruleType: "spend_comparison",
-            comparison: "more",
-            amount: data.whatTheyPay.spendingTier === "whale" ? 100 : data.whatTheyPay.spendingTier === "high" ? 50 : data.whatTheyPay.spendingTier === "medium" ? 20 : 5,
-          });
-        }
-        if (moneyRules.length > 0) col.moneyRules = moneyRules;
-      }
-      col.collapsedSections = { play: false, demo: false, psycho: false, money: false };
-      if (data.suggestedName) col.name = data.suggestedName;
-      onChange(columns.map((c, i) => (i === 0 ? col : c)));
-      setAiMode(false);
-      setAiPrompt("");
-    } catch (err) {
-      setAiError(err instanceof Error ? err.message : "Failed to generate segment");
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
   return (
     <div>
-      {/* AI Mode toggle (V5 only) */}
-      {showAIMode && (
-        <div className="mb-4">
-          <div className="flex items-center gap-1 bg-nz-bg-subtle rounded-full p-0.5 w-fit mb-3">
-            <button
-              type="button"
-              onClick={() => setAiMode(false)}
-              className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-colors ${
-                !aiMode ? "bg-nz-accent text-white" : "text-nz-text-secondary hover:text-nz-text"
-              }`}
-            >
-              Manual
-            </button>
-            <button
-              type="button"
-              onClick={() => setAiMode(true)}
-              className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-colors ${
-                aiMode ? "bg-[#D97706] text-white" : "text-nz-text-secondary hover:text-nz-text"
-              }`}
-            >
-              AI-Assisted
-            </button>
-          </div>
-
-          {aiMode && (
-            <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-4">
-              <label className="block text-sm font-body font-medium text-nz-text mb-2">
-                Describe the audience you want to reach...
-              </label>
-              <textarea
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="e.g. Hardcore RPG players in their 20s-30s who spend heavily on premium games and are motivated by exploration and story depth"
-                className="w-full h-24 px-3 py-2 text-sm font-body text-nz-text border border-nz-border rounded-card resize-none focus:outline-none focus:border-[#D97706] focus:ring-1 focus:ring-[#D97706]/20 placeholder:text-nz-text-muted"
-              />
-              <div className="flex items-center gap-3 mt-3">
-                <button
-                  type="button"
-                  onClick={handleAiGenerate}
-                  disabled={!aiPrompt.trim() || aiLoading}
-                  className="px-4 py-2 text-sm font-body font-medium text-white bg-[#D97706] rounded-card hover:bg-[#B45309] transition-colors disabled:opacity-50 flex items-center gap-2"
-                >
-                  {aiLoading ? (
-                    <>
-                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                      Generate Segment
-                    </>
-                  )}
-                </button>
-                {aiError && (
-                  <span className="text-xs text-nz-red">{aiError}</span>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Header bar */}
       <div className="flex items-center justify-between mb-4">
         {hasMultiSegment ? (

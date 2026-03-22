@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TopNav } from "@/components/TopNav";
-import { SegmentBuilder, emptyColumn } from "@/components/SegmentBuilder";
+import { SegmentBuilder, emptyColumn, emptyRule } from "@/components/SegmentBuilder";
 import type { SegmentColumn } from "@/components/SegmentBuilder";
 import { useProjectStore } from "@/lib/store";
 import { formatNumber } from "@/lib/mockData";
 import { scopedKey } from "@/lib/versionedStorage";
+import { useVersion } from "@/contexts/VersionContext";
+import { AIChatFlow } from "@/components/AIChatFlow";
 
 const lifecycleOptions = [
   "Concept/Pre-Greenlight",
@@ -197,6 +199,8 @@ function MarketSelector({
 
 export default function NewProjectPage() {
   const router = useRouter();
+  const { version, showAIMode } = useVersion();
+  const [mode, setMode] = useState<"select" | "manual" | "ai">(showAIMode ? "select" : "manual");
   const [step, setStep] = useState(1);
 
   // Zustand store
@@ -273,11 +277,62 @@ export default function NewProjectPage() {
 
   const handleCreate = () => {
     const slug = createProject();
-    // Persist the full segment builder columns to localStorage so the
-    // segments page (and audience/profile pages) can load them.
     localStorage.setItem(
       scopedKey(`project_${slug}_segments`),
       JSON.stringify(segmentColumns)
+    );
+    router.push(`/projects/${slug}/audience`);
+  };
+
+  // AI project creation handler (V5)
+  const handleAICreate = (
+    meta: { gameTitle?: string; lifecycle?: string; monetization?: string; platforms?: string[] },
+    segments: { name: string; priority: string; description: string; rules: { genres?: string[]; platforms?: string[]; spender?: boolean; engagement?: string } }[],
+    projectNameInput: string
+  ) => {
+    // Populate wizard form
+    setWizardField("gameTitle", meta.gameTitle || projectNameInput);
+    setWizardField("projectName", projectNameInput);
+    setWizardField("lifecycle", meta.lifecycle || "In Development");
+    setWizardField("monetization", meta.monetization || "Premium / P2P");
+    setWizardField("platforms", meta.platforms || ["PC"]);
+
+    // Build segment columns from AI output
+    const SEGMENT_COLORS_LOCAL = ["#4F46E5", "#00C2A8", "#F6A623", "#805AD5", "#A0AEC0"];
+    const TIERS_LOCAL = ["Core", "Secondary", "Tertiary", "Quaternary", "Additional"];
+    const aiColumns: SegmentColumn[] = segments.map((seg, i) => {
+      const col = emptyColumn(i);
+      col.name = seg.name;
+      // Map genres to play rules
+      if (seg.rules.genres) {
+        col.playRules = seg.rules.genres.map((g) => ({
+          ...emptyRule(),
+          entityType: "genre" as const,
+          entityValue: g,
+        }));
+      }
+      return col;
+    });
+
+    // Set wizard segments
+    setWizardSegments(segments.map((seg, i) => ({
+      name: seg.name,
+      tier: TIERS_LOCAL[i] || TIERS_LOCAL[0],
+      color: SEGMENT_COLORS_LOCAL[i] || SEGMENT_COLORS_LOCAL[0],
+      rules: aiColumns[i]?.playRules || [],
+      demoRules: [],
+      psychoRules: [],
+      moneyRules: [],
+      analyzed: false,
+      size: 0,
+      convRate: 0,
+    })));
+
+    // Create the project
+    const slug = createProject();
+    localStorage.setItem(
+      scopedKey(`project_${slug}_segments`),
+      JSON.stringify(aiColumns)
     );
     router.push(`/projects/${slug}/audience`);
   };
@@ -290,6 +345,81 @@ export default function NewProjectPage() {
     wizardSegments.length === 4 ? "grid-cols-4" :
     "grid-cols-5";
 
+  // V5 Mode Selection Screen
+  if (mode === "select") {
+    return (
+      <div>
+        <TopNav breadcrumbs={[{ label: "Workspace", href: "/dashboard" }, { label: "New Project" }]} title="Create New Project" />
+        <div className="p-6 max-w-3xl mx-auto">
+          <h2 className="text-xl font-heading font-bold text-nz-text mb-2">How do you want to build your audience?</h2>
+          <p className="text-sm font-body text-nz-text-secondary mb-8">Choose your approach — you can always switch later</p>
+
+          <div className="grid grid-cols-2 gap-5">
+            {/* Ask AI card */}
+            <button
+              type="button"
+              onClick={() => setMode("ai")}
+              className="text-left bg-white rounded-card border-2 border-nz-primary p-6 shadow-card hover:shadow-card-hover transition-all relative"
+            >
+              <span className="absolute top-3 right-3 text-[10px] font-heading font-semibold uppercase tracking-wider bg-nz-primary text-white px-2 py-0.5 rounded-full">
+                Recommended
+              </span>
+              <div className="w-10 h-10 rounded-full bg-nz-primary-light flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-nz-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-heading font-semibold text-nz-text mb-2">Ask AI</h3>
+              <p className="text-sm font-body text-nz-text-secondary">
+                Describe the audience you&apos;re looking for in plain language. Our AI will ask follow-up questions and build the segments for you.
+              </p>
+              <span className="inline-block mt-4 text-sm font-heading font-semibold text-nz-primary">
+                Get started &rarr;
+              </span>
+            </button>
+
+            {/* Build manually card */}
+            <button
+              type="button"
+              onClick={() => setMode("manual")}
+              className="text-left bg-white rounded-card border border-nz-border p-6 shadow-card hover:shadow-card-hover transition-all relative"
+            >
+              <span className="absolute top-3 right-3 text-[10px] font-body font-medium text-nz-text-muted uppercase tracking-wider">
+                For power users
+              </span>
+              <div className="w-10 h-10 rounded-full bg-nz-bg-subtle flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-nz-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+              </div>
+              <h3 className="text-base font-heading font-semibold text-nz-text mb-2">Build manually</h3>
+              <p className="text-sm font-body text-nz-text-secondary">
+                Define your own rules across behavior, demographics, psychographics, and spend.
+              </p>
+              <span className="inline-block mt-4 text-sm font-heading font-semibold text-nz-text-secondary">
+                Open builder &rarr;
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // V5 AI Chat Flow
+  if (mode === "ai") {
+    return (
+      <div>
+        <TopNav breadcrumbs={[{ label: "Workspace", href: "/dashboard" }, { label: "New Project" }]} title="" minimal />
+        <AIChatFlow
+          onBack={() => setMode("select")}
+          onProjectReady={handleAICreate}
+        />
+      </div>
+    );
+  }
+
+  // Manual flow (all versions, and V5 when "Build manually" is selected)
   return (
     <div>
       <TopNav
