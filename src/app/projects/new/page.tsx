@@ -334,6 +334,13 @@ export default function NewProjectPage() {
           ))}
         </div>
 
+        {/* Step description */}
+        <p className="text-sm text-gray-500 mb-5">
+          {step === 1 && "Tell us about your game. This helps contextualise your segment analysis and tailor recommendations to your lifecycle stage and market."}
+          {step === 2 && "Define the player groups you want to compare. Build each segment using behavioral rules, then Run Analysis to see its addressable market size."}
+          {step === 3 && "Review your project before saving. Go back to edit any segment or project details."}
+        </p>
+
         {step === 1 && (
           <div className="bg-white rounded-card border border-nz-border p-6 space-y-6">
             {/* Lifecycle Stage */}
@@ -480,14 +487,6 @@ export default function NewProjectPage() {
               onChange={(v) => setWizardField("primaryMarket", v as string)}
             />
 
-            {/* Secondary Markets */}
-            <MarketSelector
-              label="Secondary Markets"
-              value={secondaryMarkets}
-              onChange={(v) => setWizardField("secondaryMarkets", v as string[])}
-              multiSelect
-            />
-
             {/* Submit */}
             <div className="pt-4 border-t border-nz-border flex justify-end">
               <button
@@ -576,12 +575,6 @@ export default function NewProjectPage() {
               <div>
                 <div className="text-xs text-nz-text-muted uppercase mb-1">Primary Market</div>
                 <div className="text-sm font-medium text-nz-text">{primaryMarket || "\u2014"}</div>
-              </div>
-              <div>
-                <div className="text-xs text-nz-text-muted uppercase mb-1">Secondary Markets</div>
-                <div className="text-sm font-medium text-nz-text">
-                  {secondaryMarkets.length > 0 ? secondaryMarkets.join(", ") : "\u2014"}
-                </div>
               </div>
             </div>
 
