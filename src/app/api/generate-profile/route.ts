@@ -252,10 +252,11 @@ function heuristicProfile(req: GenerateProfileRequest): GeneratedProfile {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: GenerateProfileRequest = await request.json();
+    const body: GenerateProfileRequest & { version?: string } = await request.json();
 
+    // Only use Claude AI for V5; all other versions get heuristic profiles
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (apiKey && apiKey.trim().length > 0) {
+    if (body.version === "v5" && apiKey && apiKey.trim().length > 0) {
       try {
         const Anthropic = (await import("@anthropic-ai/sdk")).default;
         const client = new Anthropic({ apiKey });

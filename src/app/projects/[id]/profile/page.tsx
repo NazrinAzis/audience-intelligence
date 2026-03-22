@@ -17,6 +17,8 @@ import {
   formatNumber,
 } from "@/lib/mockData";
 import { useProjectStore } from "@/lib/store";
+import { useVersion } from "@/contexts/VersionContext";
+import { scopedKey } from "@/lib/versionedStorage";
 import type { GeneratedProfile } from "@/app/api/generate-profile/route";
 import {
   BarChart,
@@ -1456,7 +1458,7 @@ function generateFallbackPriorBehavior(
   let subGenres: string[] = [];
   let themes: string[] = [];
   try {
-    const raw = localStorage.getItem(`project_${projectId}_segments`);
+    const raw = localStorage.getItem(scopedKey(`project_${projectId}_segments`));
     if (raw) {
       const cols = JSON.parse(raw);
       const col = cols[segIdx];
@@ -1822,8 +1824,9 @@ function GeneratedProfileContent({
   const [profile, setProfile] = useState<GeneratedProfile | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { version } = useVersion();
 
-  const cacheKey = `project_${projectId}_profile_${segIdx}`;
+  const cacheKey = scopedKey(`project_${projectId}_profile_${segIdx}`);
 
   const generateProfile = useCallback(async () => {
     setLoading(true);
@@ -1832,7 +1835,7 @@ function GeneratedProfileContent({
       // Read segment rules from localStorage
       let rules = { playRules: [] as Array<{ entityType: string; entityValue: string; ruleType: string; minHours: number }>, demoRules: [] as Array<{ attribute: string; value: string }>, psychoRules: [] as Array<{ attribute: string; value: string }>, moneyRules: [] as Array<{ ruleType: string }> };
       try {
-        const builderData = localStorage.getItem(`project_${projectId}_segments`);
+        const builderData = localStorage.getItem(scopedKey(`project_${projectId}_segments`));
         if (builderData) {
           const cols = JSON.parse(builderData);
           if (cols[segIdx]) {
@@ -1858,6 +1861,7 @@ function GeneratedProfileContent({
           projectTitle,
           lifecycle,
           platforms,
+          version,
         }),
       });
 
@@ -1872,7 +1876,7 @@ function GeneratedProfileContent({
     } finally {
       setLoading(false);
     }
-  }, [projectId, segIdx, segName, addressableMarket, conversionRate, projectTitle, lifecycle, platforms, cacheKey]);
+  }, [projectId, segIdx, segName, addressableMarket, conversionRate, projectTitle, lifecycle, platforms, cacheKey, version]);
 
   useEffect(() => {
     // Try loading from cache first

@@ -7,6 +7,7 @@ import { SegmentBuilder, emptyColumn } from "@/components/SegmentBuilder";
 import type { SegmentColumn } from "@/components/SegmentBuilder";
 import { useProjectStore } from "@/lib/store";
 import { formatNumber } from "@/lib/mockData";
+import { scopedKey } from "@/lib/versionedStorage";
 
 const lifecycleOptions = [
   "Concept/Pre-Greenlight",
@@ -275,7 +276,7 @@ export default function NewProjectPage() {
     // Persist the full segment builder columns to localStorage so the
     // segments page (and audience/profile pages) can load them.
     localStorage.setItem(
-      `project_${slug}_segments`,
+      scopedKey(`project_${slug}_segments`),
       JSON.stringify(segmentColumns)
     );
     router.push(`/projects/${slug}/audience`);

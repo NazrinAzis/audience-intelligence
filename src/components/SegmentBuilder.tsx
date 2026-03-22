@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useVersion } from "@/contexts/VersionContext";
+import { scopedKey } from "@/lib/versionedStorage";
 import {
   RULE_ENTITIES,
   ENTITY_TYPE_OPTIONS,
@@ -107,10 +109,10 @@ const SEGMENT_COLORS = ["#4F46E5", "#22C55E", "#F6A623", "#805AD5", "#A0AEC0"];
 const TIERS = ["Core", "Secondary", "Tertiary", "Quaternary", "Additional"] as const;
 
 const QUADRANT_STYLES = {
-  play: { pillBg: "#EEF2FF", pillColor: "#4F46E5", pillBorder: "rgba(79,70,229,0.25)", label: "WHAT THEY PLAY" },
-  demo: { pillBg: "#E8F4FD", pillColor: "#2B6CB0", pillBorder: "rgba(43,108,176,0.2)", label: "WHO THEY ARE" },
-  psycho: { pillBg: "#F0FFF4", pillColor: "#276749", pillBorder: "rgba(39,103,73,0.2)", label: "WHY THEY PLAY" },
-  money: { pillBg: "#FFFAF0", pillColor: "#B7791F", pillBorder: "rgba(183,121,31,0.2)", label: "WHAT THEY PAY" },
+  play: { pillBg: "#F0FDF9", pillColor: "#00C9A7", pillBorder: "rgba(0,201,167,0.25)", label: "WHAT THEY PLAY" },
+  demo: { pillBg: "#EFF6FF", pillColor: "#3B82F6", pillBorder: "rgba(59,130,246,0.2)", label: "WHO THEY ARE" },
+  psycho: { pillBg: "#FAF5FF", pillColor: "#805AD5", pillBorder: "rgba(128,90,213,0.2)", label: "WHY THEY PLAY" },
+  money: { pillBg: "#FFFBEB", pillColor: "#F59E0B", pillBorder: "rgba(245,158,11,0.2)", label: "WHAT THEY PAY" },
 } as const;
 
 let _ruleIdCounter = 0;
@@ -656,24 +658,24 @@ function SectionHeader({
     <button
       type="button"
       onClick={onToggle}
-      className="w-full flex items-center gap-2 py-1.5 group"
-      style={{ borderLeft: `3px solid ${style.pillColor}`, paddingLeft: "8px" }}
+      className="w-full flex items-center gap-2 py-2 group"
+      style={{ borderLeft: `4px solid ${style.pillColor}`, paddingLeft: "10px" }}
     >
       <span
-        className="text-[10px] font-bold uppercase tracking-[0.08em]"
+        className="text-xs font-heading font-semibold uppercase tracking-wider"
         style={{ color: style.pillColor }}
       >
         {style.label}
       </span>
       {ruleCount > 0 && (
         <span
-          className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+          className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full"
           style={{ backgroundColor: style.pillBg, color: style.pillColor }}
         >
           {ruleCount}
         </span>
       )}
-      <span className="ml-auto text-[10px] text-[#6B7280]">{collapsed ? "\u25B8" : "\u25BE"}</span>
+      <span className="ml-auto text-xs text-nz-text-muted">{collapsed ? "\u25B8" : "\u25BE"}</span>
     </button>
   );
 }
@@ -1169,6 +1171,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
   const [gamesModalCol, setGamesModalCol] = useState<number | null>(null);
   const [showCompare, setShowCompare] = useState(false);
   const [notesOpen, setNotesOpen] = useState<Record<number, boolean>>({});
+  const { isDimVisible, showAIMode, hasMultiSegment } = useVersion();
 
   const tierAssignments = assignTiers(columns);
   const analyzedCount = columns.filter((c) => c.analyzed).length;
@@ -1300,7 +1303,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
       // Cache result
       if (projectId) {
         try {
-          const cacheKey = `project_${projectId}_results`;
+          const cacheKey = scopedKey(`project_${projectId}_results`);
           const cache = JSON.parse(localStorage.getItem(cacheKey) || "{}");
           cache[colIdx] = data;
           localStorage.setItem(cacheKey, JSON.stringify(cache));
@@ -1373,15 +1376,156 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
     columns.length === 4 ? "grid-cols-4" :
     "grid-cols-5";
 
+  // AI mode state (V5 only)
+  const [aiMode, setAiMode] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const handleAiGenerate = async () => {
+    if (!aiPrompt.trim() || aiLoading) return;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/ai-segment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: aiPrompt, version: "v5" }),
+      });
+      if (!res.ok) throw new Error("AI generation failed");
+      const data = await res.json();
+      // Auto-populate first segment column with AI results
+      const col = { ...columns[0] };
+      if (data.whatTheyPlay) {
+        const rules: QueryRule[] = [];
+        if (data.whatTheyPlay.genre) {
+          rules.push({ ...emptyRule(), entityType: "genre", entityValue: data.whatTheyPlay.genre });
+        }
+        if (data.whatTheyPlay.subGenre) {
+          rules.push({ ...emptyRule(), entityType: "subGenre", entityValue: data.whatTheyPlay.subGenre });
+        }
+        if (rules.length > 0) col.playRules = rules;
+      }
+      if (data.whoTheyAre) {
+        const demoRules: DemographicRule[] = [];
+        let demoId = 100;
+        if (data.whoTheyAre.ageRange) demoRules.push({ id: demoId++, attribute: "age", value: data.whoTheyAre.ageRange });
+        if (data.whoTheyAre.gender) demoRules.push({ id: demoId++, attribute: "gender", value: data.whoTheyAre.gender });
+        if (data.whoTheyAre.region) demoRules.push({ id: demoId++, attribute: "region", value: data.whoTheyAre.region });
+        if (demoRules.length > 0) col.demoRules = demoRules;
+      }
+      if (data.whyTheyPlay) {
+        const psychoRules: PsychographicRule[] = [];
+        let psychoId = 200;
+        if (data.whyTheyPlay.motivation) psychoRules.push({ id: psychoId++, attribute: "motivation", value: data.whyTheyPlay.motivation });
+        if (psychoRules.length > 0) col.psychoRules = psychoRules;
+      }
+      if (data.whatTheyPay) {
+        const moneyRules: MonetizationRule[] = [];
+        let moneyId = 300;
+        if (data.whatTheyPay.spendingTier) {
+          moneyRules.push({
+            id: moneyId++,
+            ruleType: "spend_comparison",
+            comparison: "more",
+            amount: data.whatTheyPay.spendingTier === "whale" ? 100 : data.whatTheyPay.spendingTier === "high" ? 50 : data.whatTheyPay.spendingTier === "medium" ? 20 : 5,
+          });
+        }
+        if (moneyRules.length > 0) col.moneyRules = moneyRules;
+      }
+      col.collapsedSections = { play: false, demo: false, psycho: false, money: false };
+      if (data.suggestedName) col.name = data.suggestedName;
+      onChange(columns.map((c, i) => (i === 0 ? col : c)));
+      setAiMode(false);
+      setAiPrompt("");
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Failed to generate segment");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   return (
     <div>
+      {/* AI Mode toggle (V5 only) */}
+      {showAIMode && (
+        <div className="mb-4">
+          <div className="flex items-center gap-1 bg-nz-bg-subtle rounded-full p-0.5 w-fit mb-3">
+            <button
+              type="button"
+              onClick={() => setAiMode(false)}
+              className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-colors ${
+                !aiMode ? "bg-nz-accent text-white" : "text-nz-text-secondary hover:text-nz-text"
+              }`}
+            >
+              Manual
+            </button>
+            <button
+              type="button"
+              onClick={() => setAiMode(true)}
+              className={`px-3 py-1.5 text-[11px] font-medium rounded-full transition-colors ${
+                aiMode ? "bg-[#D97706] text-white" : "text-nz-text-secondary hover:text-nz-text"
+              }`}
+            >
+              AI-Assisted
+            </button>
+          </div>
+
+          {aiMode && (
+            <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-4">
+              <label className="block text-sm font-body font-medium text-nz-text mb-2">
+                Describe the audience you want to reach...
+              </label>
+              <textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="e.g. Hardcore RPG players in their 20s-30s who spend heavily on premium games and are motivated by exploration and story depth"
+                className="w-full h-24 px-3 py-2 text-sm font-body text-nz-text border border-nz-border rounded-card resize-none focus:outline-none focus:border-[#D97706] focus:ring-1 focus:ring-[#D97706]/20 placeholder:text-nz-text-muted"
+              />
+              <div className="flex items-center gap-3 mt-3">
+                <button
+                  type="button"
+                  onClick={handleAiGenerate}
+                  disabled={!aiPrompt.trim() || aiLoading}
+                  className="px-4 py-2 text-sm font-body font-medium text-white bg-[#D97706] rounded-card hover:bg-[#B45309] transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {aiLoading ? (
+                    <>
+                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Generate Segment
+                    </>
+                  )}
+                </button>
+                {aiError && (
+                  <span className="text-xs text-nz-red">{aiError}</span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Header bar */}
       <div className="flex items-center justify-between mb-4">
-        <div className="text-xs text-[#6B7280]">
-          {columns.length} segment{columns.length !== 1 ? "s" : ""}
-        </div>
+        {hasMultiSegment ? (
+          <div className="text-xs text-[#6B7280]">
+            {columns.length} segment{columns.length !== 1 ? "s" : ""}
+          </div>
+        ) : (
+          <div />
+        )}
         <div className="flex items-center gap-2">
-          {analyzedCount >= 2 && (
+          {hasMultiSegment && analyzedCount >= 2 && (
             <button
               type="button"
               onClick={() => setShowCompare(true)}
@@ -1390,15 +1534,17 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
               Compare Segments
             </button>
           )}
-          <button
-            type="button"
-            onClick={addSegment}
-            disabled={columns.length >= 5}
-            className="px-3 py-1.5 text-[11px] font-medium text-[#4A5568] bg-white border border-[#E5E7EB] rounded-md hover:border-[#4F46E5]/40 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            title={columns.length >= 5 ? "Maximum 5 segments reached" : "Add a new segment"}
-          >
-            + Add Segment
-          </button>
+          {hasMultiSegment && (
+            <button
+              type="button"
+              onClick={addSegment}
+              disabled={columns.length >= 5}
+              className="px-3 py-1.5 text-[11px] font-medium text-[#4A5568] bg-white border border-[#E5E7EB] rounded-md hover:border-[#4F46E5]/40 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              title={columns.length >= 5 ? "Maximum 5 segments reached" : "Add a new segment"}
+            >
+              + Add Segment
+            </button>
+          )}
         </div>
       </div>
 
@@ -1423,7 +1569,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
           return (
             <div
               key={colIdx}
-              className="bg-white rounded-lg border border-[#E5E7EB] shadow-sm overflow-hidden"
+              className="bg-white rounded-card border border-nz-border shadow-card overflow-hidden"
             >
               {/* Top color bar */}
               <div className="h-1" style={{ backgroundColor: tier.color }} />
@@ -1431,35 +1577,42 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
               <div className={`p-4 ${columns.length >= 4 ? "p-3" : ""}`}>
                 {/* Segment name + tier + health + delete */}
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    {editingName === colIdx ? (
-                      <input
-                        autoFocus
-                        defaultValue={col.name}
-                        onBlur={(e) => renameSeg(colIdx, e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") renameSeg(colIdx, e.currentTarget.value);
-                        }}
-                        className="text-sm font-semibold text-[#111827] border-b border-[#4F46E5] focus:outline-none bg-transparent min-w-0"
-                      />
-                    ) : (
-                      <>
-                        <h3 className="text-sm font-semibold text-[#111827] truncate">{col.name}</h3>
-                        <button
-                          type="button"
-                          onClick={() => setEditingName(colIdx)}
-                          className="text-[#6B7280] hover:text-[#4F46E5] shrink-0"
-                        >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                          </svg>
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  {/* Name + edit — only in multi-segment (V2+). V0/V1 rename from page title. */}
+                  {hasMultiSegment ? (
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      {editingName === colIdx ? (
+                        <input
+                          autoFocus
+                          defaultValue={col.name}
+                          onBlur={(e) => renameSeg(colIdx, e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") renameSeg(colIdx, e.currentTarget.value);
+                          }}
+                          className="text-base font-heading font-semibold text-nz-text border-b border-nz-primary focus:outline-none bg-transparent min-w-0"
+                        />
+                      ) : (
+                        <>
+                          <h3 className="text-base font-heading font-semibold text-nz-text truncate">{col.name}</h3>
+                          <button
+                            type="button"
+                            onClick={() => setEditingName(colIdx)}
+                            className="text-nz-text-muted hover:text-nz-primary shrink-0"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex-1" />
+                  )}
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {/* Health badge */}
-                    <span title={healthBadge.label} className="text-xs cursor-help">{healthBadge.emoji}</span>
+                    {/* Health badge — only for multi-segment (V2+) */}
+                    {hasMultiSegment && (
+                      <span title={healthBadge.label} className="text-xs cursor-help">{healthBadge.emoji}</span>
+                    )}
                     {/* Notes indicator */}
                     {col.notes && (
                       <span className="text-xs" title="Has notes">
@@ -1468,14 +1621,18 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                         </svg>
                       </span>
                     )}
-                    {/* Tier badge */}
-                    {tier.tier && (
+                    {/* Tier badge — only show for multi-segment (V2+) */}
+                    {hasMultiSegment && tier.tier && (
                       <span
-                        className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full"
-                        style={{
+                        className={`text-xs font-semibold uppercase px-2.5 py-0.5 rounded-full ${
+                          tier.tier === "Core"
+                            ? "bg-nz-primary-light text-nz-primary-text"
+                            : ""
+                        }`}
+                        style={tier.tier !== "Core" ? {
                           backgroundColor: tier.color + "15",
                           color: tier.color,
-                        }}
+                        } : undefined}
                       >
                         {tier.tier}
                       </span>
@@ -1554,10 +1711,10 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                       {/* Exclude rules */}
                       <div className="mt-2">
                         <div className="flex items-center gap-2 mb-2">
-                          <div className="text-[10px] font-semibold uppercase tracking-wider text-red-500">
+                          <div className="text-xs font-heading font-semibold uppercase tracking-wider text-nz-red">
                             Exclude
                           </div>
-                          <div className="flex-1 h-px bg-red-200" />
+                          <div className="flex-1 h-px bg-nz-red/20" />
                         </div>
                         {col.excludeRules.length === 0 ? (
                           <button
@@ -1614,6 +1771,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                 })()}
 
                 {/* ── QUADRANT 2: WHO THEY ARE ── */}
+                {isDimVisible("demo") && (
                 <div className="mb-3">
                   <SectionHeader
                     quadrant="demo"
@@ -1651,9 +1809,10 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                     </>
                   )}
                 </div>
+                )}
 
                 {/* Cross-section connector between demo and psycho if needed */}
-                {col.demoRules.some((r) => r.value) && (col.psychoRules.some((r) => r.value) || col.moneyRules.length > 0) && activeSectionCount > 1 && (
+                {isDimVisible("demo") && col.demoRules.some((r) => r.value) && (col.psychoRules.some((r) => r.value) || col.moneyRules.length > 0) && activeSectionCount > 1 && (
                   <CrossSectionConnector
                     value={col.sectionConnector}
                     onChange={(v) => updateCol(colIdx, { sectionConnector: v })}
@@ -1661,6 +1820,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                 )}
 
                 {/* ── QUADRANT 3: WHY THEY PLAY ── */}
+                {isDimVisible("psycho") && (
                 <div className="mb-3">
                   <SectionHeader
                     quadrant="psycho"
@@ -1698,9 +1858,10 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                     </>
                   )}
                 </div>
+                )}
 
                 {/* Cross-section connector between psycho and money if needed */}
-                {col.psychoRules.some((r) => r.value) && col.moneyRules.length > 0 && activeSectionCount > 1 && (
+                {isDimVisible("psycho") && col.psychoRules.some((r) => r.value) && col.moneyRules.length > 0 && activeSectionCount > 1 && (
                   <CrossSectionConnector
                     value={col.sectionConnector}
                     onChange={(v) => updateCol(colIdx, { sectionConnector: v })}
@@ -1708,6 +1869,7 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                 )}
 
                 {/* ── QUADRANT 4: WHAT THEY PAY ── */}
+                {isDimVisible("money") && (
                 <div className="mb-3">
                   <SectionHeader
                     quadrant="money"
@@ -1755,31 +1917,30 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
                     </>
                   )}
                 </div>
+                )}
 
-                {/* Divider + actions */}
-                <div className="mt-4 pt-4 border-t border-[#E5E7EB] flex items-center gap-3">
+                {/* Run Analysis */}
+                <div className="mt-4 pt-4 border-t border-nz-border flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => runAnalysis(colIdx)}
                     disabled={col.loading}
-                    className="px-4 py-2 bg-[#111827] text-white text-xs font-medium rounded-md hover:bg-[#111827]/90 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-nz-primary text-white text-sm font-heading font-semibold rounded-card hover:bg-nz-primary-hover transition-colors flex items-center gap-2 disabled:opacity-50"
                   >
                     {col.loading ? (
-                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                    ) : (
-                      <span>&#9654;</span>
-                    )}
-                    Run Analysis
+                    ) : null}
+                    {col.loading ? "Analyzing..." : "Run Analysis"}
                   </button>
                   {/* Games count beside button */}
                   {gameCountEstimate > 0 && (
                     <button
                       type="button"
                       onClick={() => setGamesModalCol(colIdx)}
-                      className="text-[10px] text-[#4F46E5] hover:underline"
+                      className="text-[10px] text-nz-primary hover:underline font-body"
                     >
                       ~{col.analyzed ? col.gamesCount : gameCountEstimate} games &#8250;
                     </button>
@@ -1788,15 +1949,15 @@ export function SegmentBuilder({ columns, onChange, projectId, projectContext }:
 
                 {/* Results */}
                 {col.analyzed && !col.loading && (
-                  <div className="mt-4 p-3 bg-[#F5F6F8] rounded-md">
-                    <div className="text-2xl font-bold text-[#111827]">
+                  <div className="mt-4 p-4 bg-nz-bg-subtle rounded-card border border-nz-border">
+                    <div className="text-2xl font-mono font-semibold text-nz-text">
                       {col.size.toLocaleString()}
                     </div>
-                    <div className="text-xs text-[#4A5568] mt-1">
+                    <div className="text-xs font-body text-nz-text-secondary mt-1">
                       Addressable market
                     </div>
-                    <div className="text-xs text-[#4A5568] mt-1">
-                      Conversion rate: <span className="font-semibold text-[#111827]">{col.convRate}%</span>
+                    <div className="text-xs font-body text-nz-text-secondary mt-1">
+                      Conversion rate: <span className="font-semibold text-nz-text">{typeof col.convRate === "number" ? col.convRate.toFixed(2) : col.convRate}%</span>
                     </div>
                     <ResultBreakdownTags col={col} />
                   </div>

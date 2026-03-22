@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useProjectStore } from "@/lib/store";
+import { useVersion } from "@/contexts/VersionContext";
 
 const workspaceNav = [
   { label: "All Projects", href: "/dashboard", icon: "grid" },
@@ -53,13 +54,17 @@ export function Sidebar() {
     return found?.title ?? "Project";
   });
 
+  const { showPerformance } = useVersion();
+
   const projectNav = projectId
     ? [
         { label: "Overview", href: `/projects/${projectId}/audience`, icon: "eye" },
         { label: "Segments", href: `/projects/${projectId}/segments`, icon: "layers" },
         { label: "Profile", href: `/projects/${projectId}/profile`, icon: "user" },
         { label: "Audience", href: `/projects/${projectId}/audience`, icon: "target" },
-        { label: "Performance", href: `/projects/${projectId}/performance`, icon: "trending" },
+        ...(showPerformance
+          ? [{ label: "Trends", href: `/projects/${projectId}/performance`, icon: "trending" }]
+          : []),
       ]
     : [];
 
@@ -76,7 +81,6 @@ export function Sidebar() {
         className="flex items-center gap-2.5 px-4 py-5"
         style={{ borderBottom: "1px solid #E5E7EB" }}
       >
-        {/* "N" avatar */}
         <div
           style={{
             width: 28,

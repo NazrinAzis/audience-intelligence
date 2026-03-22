@@ -314,8 +314,9 @@ export async function POST(request: NextRequest) {
     // 1. Overlap matrix (always heuristic — deterministic)
     const overlap = generateOverlapMatrix(segments, totalTrackedUsers, generalPopConversionRate, isPreLaunch);
 
-    // 2 & 3. Try Claude for insights + affinity, fall back to heuristic
-    const claudeResult = await generateWithClaude(body, overlap);
+    // 2 & 3. Only use Claude for V5; all other versions get heuristic insights
+    const clientVersion = (body as unknown as Record<string, unknown>).version as string | undefined;
+    const claudeResult = clientVersion === "v5" ? await generateWithClaude(body, overlap) : null;
 
     let insights: InsightCard[];
     let affinity: AffinityRow[];

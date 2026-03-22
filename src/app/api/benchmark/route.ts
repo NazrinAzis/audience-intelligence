@@ -98,8 +98,10 @@ export async function POST(request: NextRequest) {
   try {
     const body: BenchmarkRequest = await request.json();
 
+    // Only use Claude AI for V5; all other versions get heuristic benchmarks
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (apiKey && apiKey.trim().length > 0) {
+    const clientVersion = (body as unknown as Record<string, unknown>).version as string | undefined;
+    if (clientVersion === "v5" && apiKey && apiKey.trim().length > 0) {
       try {
         const Anthropic = (await import("@anthropic-ai/sdk")).default;
         const client = new Anthropic({ apiKey });

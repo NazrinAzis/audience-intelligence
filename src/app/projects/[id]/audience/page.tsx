@@ -13,6 +13,8 @@ import {
 } from "@/lib/mockData";
 import { useProjectStore } from "@/lib/store";
 import type { ProjectData, SegmentData, ComparableTitle } from "@/lib/store";
+import { useVersion } from "@/contexts/VersionContext";
+import { scopedKey } from "@/lib/versionedStorage";
 
 const SEGMENT_COLORS = ["#4F46E5", "#22C55E", "#F6A623", "#805AD5", "#A0AEC0"];
 const TIERS = ["Core", "Secondary", "Tertiary", "Quaternary", "Additional"];
@@ -155,7 +157,7 @@ interface PrioritizationState {
 function loadPrioritizationState(projectId: string): PrioritizationState {
   if (typeof window === "undefined") return { mode: "auto", manualOrder: [], dismissedBanner: false };
   try {
-    const raw = localStorage.getItem(`project_${projectId}_prioritization`);
+    const raw = localStorage.getItem(scopedKey(`project_${projectId}_prioritization`));
     if (raw) return JSON.parse(raw);
   } catch { /* ignore */ }
   return { mode: "auto", manualOrder: [], dismissedBanner: false };
@@ -163,7 +165,7 @@ function loadPrioritizationState(projectId: string): PrioritizationState {
 
 function savePrioritizationState(projectId: string, state: PrioritizationState) {
   if (typeof window !== "undefined") {
-    localStorage.setItem(`project_${projectId}_prioritization`, JSON.stringify(state));
+    localStorage.setItem(scopedKey(`project_${projectId}_prioritization`), JSON.stringify(state));
   }
 }
 
@@ -775,6 +777,7 @@ function CampaignBriefModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const { version: appVersion } = useVersion();
 
   const stage = getLifecycleStage(lifecycle);
   const defaultPhase: BudgetPhase = stage === "launched" || stage === "live" ? "post-launch" : "launch-window";
@@ -803,6 +806,7 @@ function CampaignBriefModal({
           projectTitle,
           lifecycle,
           platforms,
+          version: appVersion,
           briefPrompt: `Generate a campaign brief for ${projectTitle}.
 Lifecycle: ${lifecycle}. Platform: ${platforms.join(", ")}.
 Business model: ${monetization}.
@@ -1009,6 +1013,7 @@ export default function AudiencePage() {
   const lifecycle = project?.lifecycle ?? (isKcd2 ? kcd2Project.lifecycle : "Pre-Launch");
   const stage = getLifecycleStage(lifecycle);
   const pillStyle = lifecyclePillStyle(stage);
+  const { showBullseye, showConversionRate, showCampaignBrief, showExport, version } = useVersion();
 
   // Build segment views
   const rawSegs = project ? buildSegmentViews(project, isKcd2) : [];
@@ -1049,7 +1054,7 @@ export default function AudiencePage() {
     // Load segment builder columns for rule data
     let columns: Array<{ name: string; playRules: Array<{ entityType: string; entityValue: string; ruleType: string }>; demoRules: Array<{ attribute: string; value: string }>; psychoRules: Array<{ attribute: string; value: string }>; moneyRules: Array<{ ruleType: string; category?: string }> }> = [];
     try {
-      const raw = localStorage.getItem(`project_${projectId}_segments`);
+      const raw = localStorage.getItem(scopedKey(`project_${projectId}_segments`));
       if (raw) columns = JSON.parse(raw);
     } catch { /* ignore */ }
 
@@ -1090,7 +1095,7 @@ export default function AudiencePage() {
 
             // Also merge into localStorage results cache
             try {
-              const cacheKey = `project_${projectId}_results`;
+              const cacheKey = scopedKey(`project_${projectId}_results`);
               const cache = JSON.parse(localStorage.getItem(cacheKey) || "{}");
               cache[index] = {
                 ...cache[index],
@@ -1128,7 +1133,7 @@ export default function AudiencePage() {
     if (analyzedSegs.length === 0) return;
 
     // Check localStorage cache first
-    const cacheKey = `project_${projectId}_audience_sections`;
+    const cacheKey = scopedKey(`project_${projectId}_audience_sections`);
     try {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
@@ -1167,6 +1172,7 @@ export default function AudiencePage() {
           priorityScore: s.priorityScore,
         })),
         sections: ["overlap", "insights", "affinity"],
+        version,
       }),
     })
       .then((res) => res.json())
@@ -1260,23 +1266,27 @@ export default function AudiencePage() {
         title="Audience Overview"
         actions={
           <>
-            <ExportDropdown
-              projectTitle={projectTitle}
-              lifecycle={lifecycle}
-              segs={segsWithScores}
-              totalAddressableAudience={totalAddressableAudience}
-              generalPopConversionRate={generalPopConversionRate}
-              onToast={setToastMsg}
-            />
-            <button
-              onClick={() => setShowBriefModal(true)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-body font-medium text-white bg-nz-accent rounded-card hover:bg-nz-accent-hover transition-colors print:hidden"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              Campaign Brief
-            </button>
+            {showExport && (
+              <ExportDropdown
+                projectTitle={projectTitle}
+                lifecycle={lifecycle}
+                segs={segsWithScores}
+                totalAddressableAudience={totalAddressableAudience}
+                generalPopConversionRate={generalPopConversionRate}
+                onToast={setToastMsg}
+              />
+            )}
+            {showCampaignBrief && (
+              <button
+                onClick={() => setShowBriefModal(true)}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-body font-medium text-white bg-nz-accent rounded-card hover:bg-nz-accent-hover transition-colors print:hidden"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Campaign Brief
+              </button>
+            )}
           </>
         }
       />
@@ -1311,14 +1321,18 @@ export default function AudiencePage() {
               {!isPreLaunchStage(stage) && segs.length > 0 && (
                 <div className="text-sm font-body text-nz-text-body mt-2 flex items-center gap-3">
                   <span>Actual adopters: {formatNumber(totalAdopters)}</span>
-                  <span className="text-nz-text-muted">&middot;</span>
-                  <span>Overall conv: <span className="font-mono">{overallActualConv.toFixed(2)}%</span></span>
-                  {overallBenchmarkMid > 0 && (
+                  {showConversionRate && (
                     <>
                       <span className="text-nz-text-muted">&middot;</span>
-                      <span className="font-mono" style={{ color: vsBenchmark > 0.5 ? "#10B981" : vsBenchmark < -0.5 ? "#EF4444" : "#6B7280" }}>
-                        vs benchmark: {vsBenchmark > 0 ? "+" : ""}{vsBenchmark.toFixed(1)}pp {vsBenchmark > 0.5 ? "\u2191" : vsBenchmark < -0.5 ? "\u2193" : ""}
-                      </span>
+                      <span>Overall conv: <span className="font-mono">{overallActualConv.toFixed(2)}%</span></span>
+                      {overallBenchmarkMid > 0 && (
+                        <>
+                          <span className="text-nz-text-muted">&middot;</span>
+                          <span className="font-mono" style={{ color: vsBenchmark > 0.5 ? "#10B981" : vsBenchmark < -0.5 ? "#EF4444" : "#6B7280" }}>
+                            vs benchmark: {vsBenchmark > 0 ? "+" : ""}{vsBenchmark.toFixed(1)}pp {vsBenchmark > 0.5 ? "\u2191" : vsBenchmark < -0.5 ? "\u2193" : ""}
+                          </span>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
@@ -1335,13 +1349,15 @@ export default function AudiencePage() {
               <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">
                 {formatNumber(totalTrackedUsers)}
               </div>
-              <div className="text-sm font-body text-nz-text-secondary mt-1 flex items-center justify-end gap-1">
-                <MetricTooltip
-                  label={`General pop. conv: ${generalPopConversionRate}%`}
-                  definition="Conversion rate of the full tracked population, regardless of segment."
-                  whyItMatters="Your baseline. Every segment should outperform this — if not, redefine the segment."
-                />
-              </div>
+              {showConversionRate && (
+                <div className="text-sm font-body text-nz-text-secondary mt-1 flex items-center justify-end gap-1">
+                  <MetricTooltip
+                    label={`General pop. conv: ${generalPopConversionRate}%`}
+                    definition="Conversion rate of the full tracked population, regardless of segment."
+                    whyItMatters="Your baseline. Every segment should outperform this — if not, redefine the segment."
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1434,22 +1450,52 @@ export default function AudiencePage() {
           </div>
         )}
 
-        {/* Bullseye */}
+        {/* Bullseye / Segment List */}
         {segs.length > 0 ? (
-          <div className="bg-white rounded-card border border-nz-border p-6 mb-6 shadow-card">
-            <h3 className="text-sm font-heading font-semibold text-nz-text mb-2 text-center">
-              Audience Segmentation &mdash; Bullseye View
-            </h3>
-            <BullseyeDiagram
-              segs={segs}
-              totalAdopters={
-                isPreLaunchStage(stage)
-                  ? Math.round((totalPredictedLow + totalPredictedHigh) / 2)
-                  : totalAdopters
-              }
-              stage={stage}
-            />
-          </div>
+          showBullseye ? (
+            <div className="bg-white rounded-card border border-nz-border p-6 mb-6 shadow-card">
+              <h3 className="text-sm font-heading font-semibold text-nz-text mb-2 text-center">
+                Audience Segmentation &mdash; Bullseye View
+              </h3>
+              <BullseyeDiagram
+                segs={segs}
+                totalAdopters={
+                  isPreLaunchStage(stage)
+                    ? Math.round((totalPredictedLow + totalPredictedHigh) / 2)
+                    : totalAdopters
+                }
+                stage={stage}
+              />
+            </div>
+          ) : (
+            /* V1: Simple ranked list instead of bullseye */
+            <div className="bg-white rounded-card border border-nz-border p-6 mb-6 shadow-card">
+              <h3 className="text-sm font-heading font-semibold text-nz-text mb-4">
+                Segments by Addressable Market Size
+              </h3>
+              <div className="space-y-3">
+                {[...segs]
+                  .sort((a, b) => b.addressableMarket - a.addressableMarket)
+                  .map((seg, i) => (
+                    <div key={seg.id} className="flex items-center gap-3">
+                      <span className="text-sm font-mono font-semibold text-nz-text-muted w-6">
+                        #{i + 1}
+                      </span>
+                      <div
+                        className="w-3 h-3 rounded-full shrink-0"
+                        style={{ backgroundColor: seg.color }}
+                      />
+                      <span className="text-sm font-body font-medium text-nz-text flex-1">
+                        {seg.name}
+                      </span>
+                      <span className="text-sm font-mono text-nz-text-secondary">
+                        {formatNumber(seg.addressableMarket)} players
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )
         ) : (
           <div className="bg-white rounded-card border border-nz-border p-8 mb-6 text-center">
             <p className="text-sm text-nz-text-muted">
@@ -1716,21 +1762,23 @@ export default function AudiencePage() {
                           </span>
                         </div>
                         {/* Actual Conv Rate */}
-                        <div className="flex justify-between text-sm">
-                          <span className="text-nz-text-secondary">
-                            <MetricTooltip
-                              label="Actual Conv. Rate"
-                              definition="Percentage of your addressable segment that has adopted your title."
-                              formula={`Conv. Rate = Actual Adopters / Addressable Market x 100\ne.g. ${formatNumber(seg.adopters)} / ${formatNumber(seg.addressableMarket)} x 100 = ${seg.conversionRate}%`}
-                              whyItMatters="Core efficiency metric. Higher rate means stronger product-market fit with this segment. Compare across segments to identify your best-performing audience and prioritize future campaigns accordingly."
-                            />
-                          </span>
-                          <span className="font-semibold text-nz-text">
-                            {seg.conversionRate}%
-                          </span>
-                        </div>
+                        {showConversionRate && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-nz-text-secondary">
+                              <MetricTooltip
+                                label="Actual Conv. Rate"
+                                definition="Percentage of your addressable segment that has adopted your title."
+                                formula={`Conv. Rate = Actual Adopters / Addressable Market x 100\ne.g. ${formatNumber(seg.adopters)} / ${formatNumber(seg.addressableMarket)} x 100 = ${seg.conversionRate}%`}
+                                whyItMatters="Core efficiency metric. Higher rate means stronger product-market fit with this segment. Compare across segments to identify your best-performing audience and prioritize future campaigns accordingly."
+                              />
+                            </span>
+                            <span className="font-semibold text-nz-text">
+                              {seg.conversionRate}%
+                            </span>
+                          </div>
+                        )}
                         {/* vs Benchmark */}
-                        {seg.benchmarkConvMid > 0 && (
+                        {showConversionRate && seg.benchmarkConvMid > 0 && (
                           <div className="flex justify-between text-sm">
                             <span className="text-nz-text-secondary">
                               <MetricTooltip

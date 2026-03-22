@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useProjectStore } from "@/lib/store";
+import { scopedKey } from "@/lib/versionedStorage";
 
 const KCD2_SEGMENT_NAMES = [
   "Simulation RPG Purists",
@@ -59,7 +60,7 @@ export function LocalStorageMigration() {
     for (const project of projects) {
       if (project.id === "kcd2") continue;
 
-      const key = `project_${project.id}_segments`;
+      const key = scopedKey(`project_${project.id}_segments`);
       const saved = localStorage.getItem(key);
       if (!saved) continue;
 

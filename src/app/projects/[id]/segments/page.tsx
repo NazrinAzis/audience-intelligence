@@ -7,10 +7,11 @@ import { SegmentBuilder, emptyRule, emptyColumn, migrateColumn } from "@/compone
 import type { SegmentColumn } from "@/components/SegmentBuilder";
 import { segments as segmentData } from "@/lib/mockData";
 import { useProjectStore } from "@/lib/store";
+import { scopedKey } from "@/lib/versionedStorage";
 
 /** Project-namespaced localStorage key for segment builder columns */
 function segmentsStorageKey(projectId: string): string {
-  return `project_${projectId}_segments`;
+  return scopedKey(`project_${projectId}_segments`);
 }
 
 /** KCD2 segment names — used only for corruption detection */

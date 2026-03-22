@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Sidebar } from "@/components/Sidebar";
 import { LocalStorageMigration } from "@/components/LocalStorageMigration";
+import { VersionProvider } from "@/contexts/VersionContext";
+import { LayoutInner } from "@/components/LayoutInner";
+import { SidebarWrapper } from "@/components/SidebarWrapper";
 
 export const metadata: Metadata = {
   title: "Audience Intelligence — Naz",
@@ -16,11 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-body antialiased bg-nz-bg text-nz-text">
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <LocalStorageMigration />
-          <main className="flex-1 ml-[200px] min-h-screen">{children}</main>
-        </div>
+        <VersionProvider>
+          <div className="flex min-h-screen">
+            <SidebarWrapper />
+            <LocalStorageMigration />
+            <LayoutInner>{children}</LayoutInner>
+          </div>
+        </VersionProvider>
       </body>
     </html>
   );

@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { project as kcd2Project, segments as kcd2Segments } from "./mockData";
+// mockData is used by pages directly, not by the store
 import type { QueryRule, DemographicRule, PsychographicRule, MonetizationRule } from "@/components/SegmentBuilder";
+import { getScopedStoreName, getCurrentVersion } from "./versionedStorage";
 
 // ─── Types ───
 
@@ -140,36 +141,12 @@ const initialWizardSegments: WizardSegment[] = [
   { name: "Segment 1", tier: TIERS[0], color: SEGMENT_COLORS[0], rules: [], demoRules: [], psychoRules: [], moneyRules: [], analyzed: false, size: 0, convRate: 0 },
 ];
 
-// ─── Seed KCD2 ───
-
-const kcd2Seed: ProjectData = {
-  id: kcd2Project.id,
-  title: kcd2Project.title,
-  lifecycle: kcd2Project.lifecycle,
-  monetization: kcd2Project.monetization,
-  launchDate: kcd2Project.launchDate,
-  platforms: kcd2Project.platforms,
-  primaryMarket: kcd2Project.primaryMarket,
-  secondaryMarkets: [],
-  totalAddressableAudience: kcd2Project.totalAddressableAudience,
-  totalTrackedUsers: kcd2Project.totalTrackedUsers,
-  generalPopConversionRate: kcd2Project.generalPopConversionRate,
-  totalAdopters: kcd2Project.totalAdopters,
-  segments: kcd2Segments.map((s) => ({
-    name: s.name,
-    tier: s.tier,
-    color: s.color,
-    addressableMarket: s.addressableMarket,
-    conversionRate: s.conversionRate,
-  })),
-};
-
 // ─── Store ───
 
 export const useProjectStore = create<ProjectStore>()(
   persist(
     (set, get) => ({
-  projects: [kcd2Seed],
+  projects: [],
   wizardForm: { ...initialWizardForm },
   wizardSegments: initialWizardSegments.map((s) => ({ ...s, rules: [], demoRules: [], psychoRules: [], moneyRules: [] })),
 
@@ -285,12 +262,13 @@ export const useProjectStore = create<ProjectStore>()(
     })),
 
   deleteProject: (projectId) => {
-    // Remove all localStorage keys for this project
+    // Remove all localStorage keys for this project (version-scoped)
     if (typeof window !== "undefined") {
+      const prefix = `${getCurrentVersion()}_project_${projectId}_`;
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith(`project_${projectId}_`)) {
+        if (key && key.startsWith(prefix)) {
           keysToRemove.push(key);
         }
       }
@@ -314,7 +292,7 @@ export const useProjectStore = create<ProjectStore>()(
     })),
     }),
     {
-      name: "nz-project-store",
+      name: getScopedStoreName(),
       partialize: (state) => ({
         projects: state.projects,
         wizardForm: state.wizardForm,

@@ -16,6 +16,8 @@ import {
 } from "@/lib/mockData";
 import { useProjectStore } from "@/lib/store";
 import type { ProjectData, SegmentData } from "@/lib/store";
+import { useVersion } from "@/contexts/VersionContext";
+import { scopedKey } from "@/lib/versionedStorage";
 import {
   LineChart,
   Line,
@@ -89,13 +91,13 @@ function loadProjectSegments(projectId: string, project: ProjectData | undefined
     confidence?: string;
   }> = {};
   try {
-    const raw = localStorage.getItem(`project_${projectId}_results`);
+    const raw = localStorage.getItem(scopedKey(`project_${projectId}_results`));
     if (raw) resultsCache = JSON.parse(raw);
   } catch { /* ignore */ }
 
   // Try localStorage first for full segment builder data with benchmark fields
   try {
-    const raw = localStorage.getItem(`project_${projectId}_segments`);
+    const raw = localStorage.getItem(scopedKey(`project_${projectId}_segments`));
     if (raw) {
       const cols = JSON.parse(raw) as Array<{
         name?: string; analyzed?: boolean; size?: number; convRate?: number;
@@ -104,10 +106,10 @@ function loadProjectSegments(projectId: string, project: ProjectData | undefined
       }>;
       // Guard: discard KCD2 segment names in non-KCD2 projects
       if (projectId !== "kcd2" && cols.some((c) => KCD2_SEGMENT_NAMES.includes(c.name ?? ""))) {
-        localStorage.removeItem(`project_${projectId}_segments`);
+        localStorage.removeItem(scopedKey(`project_${projectId}_segments`));
         // Also invalidate stale perf caches
-        localStorage.removeItem(`project_${projectId}_perf_curves`);
-        localStorage.removeItem(`project_${projectId}_perf_milestones`);
+        localStorage.removeItem(scopedKey(`project_${projectId}_perf_curves`));
+        localStorage.removeItem(scopedKey(`project_${projectId}_perf_milestones`));
         // fall through to store
       } else {
         const analyzed = cols.filter((c) => c.analyzed && (c.size ?? 0) > 0);
@@ -363,6 +365,7 @@ export default function PerformancePage() {
   const lifecycle = project?.lifecycle ?? (isKcd2 ? "Launched" : "Pre-Launch");
   const stage = getStage(lifecycle);
   const isLaunched = stage === "launched";
+  const { showPerformance } = useVersion();
 
   const [timeRange, setTimeRange] = useState<TimeRange>("D1\u2013D90");
   const [showBenchmarkBand, setShowBenchmarkBand] = useState(false);
@@ -397,7 +400,7 @@ export default function PerformancePage() {
 
     if (loaded.length > 0) {
       // Check perf curves cache first
-      const curvesCacheKey = `project_${projectId}_perf_curves`;
+      const curvesCacheKey = scopedKey(`project_${projectId}_perf_curves`);
       try {
         const cached = localStorage.getItem(curvesCacheKey);
         if (cached) {
@@ -415,7 +418,7 @@ export default function PerformancePage() {
       setFullCurves(curves);
       try {
         localStorage.setItem(curvesCacheKey, JSON.stringify(curves));
-        localStorage.setItem(`project_${projectId}_perf_milestones`, JSON.stringify(curves.milestones));
+        localStorage.setItem(scopedKey(`project_${projectId}_perf_milestones`), JSON.stringify(curves.milestones));
       } catch { /* ignore */ }
     }
 
@@ -512,7 +515,7 @@ export default function PerformancePage() {
     // Load comparableTitles from localStorage
     let comparables: { title: string; convRate: number }[] = [];
     try {
-      const raw = localStorage.getItem(`project_${projectId}_segments`);
+      const raw = localStorage.getItem(scopedKey(`project_${projectId}_segments`));
       if (raw) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const cols = JSON.parse(raw) as any[];
@@ -568,9 +571,9 @@ export default function PerformancePage() {
           breadcrumbs={[
             { label: "Workspace", href: "/dashboard" },
             { label: projectTitle },
-            { label: "Performance" },
+            { label: "Trends" },
           ]}
-          title="Performance & Benchmarking"
+          title="Trends & Benchmarking"
         />
         <div className="p-6">
           <div className="bg-white rounded-card border border-nz-border p-12 text-center">
@@ -587,6 +590,34 @@ export default function PerformancePage() {
             >
               Go to Segment Builder
             </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!showPerformance) {
+    return (
+      <div>
+        <TopNav
+          breadcrumbs={[
+            { label: "Workspace", href: "/dashboard" },
+            { label: projectTitle },
+            { label: "Trends" },
+          ]}
+          title="Trends & Benchmarking"
+        />
+        <div className="p-6">
+          <div className="bg-white rounded-card border border-nz-border p-12 text-center shadow-card">
+            <div className="w-12 h-12 rounded-full bg-nz-bg-subtle flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-nz-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-base font-heading font-semibold text-nz-text mb-2">Available from V3</h3>
+            <p className="text-sm font-body text-nz-text-secondary max-w-md mx-auto">
+              Longitudinal performance tracking requires V3 or later. Switch to V3+ to see segment size trends over time.
+            </p>
           </div>
         </div>
       </div>
