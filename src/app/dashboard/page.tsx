@@ -911,7 +911,7 @@ const V2_PLUS_HERO: Record<string, { title: string; subtitle: string; body: stri
     chips: ["Multi-segment", "Conversion rate", "Audience overlap", "Project model"],
   },
   v3: {
-    title: "Multi-Segment Analysis + Trends",
+    title: "Multi-Segment Analysis + Trends (what Jelle built on Metabase)",
     subtitle: "Track how your target segments evolve over time",
     body: "Everything in V2, plus longitudinal tracking to monitor segment growth and decay. See whether your core audience is expanding or contracting \u2014 and benchmark against comparable titles.",
     unlock: "Unlocks: track segment trends over time and benchmark against comparable titles",
