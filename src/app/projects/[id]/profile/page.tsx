@@ -246,7 +246,7 @@ function BehavioralSection({
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* MAU Card */}
         <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
-          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by GPME individual user data." /></div>
+          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by individual user data." /></div>
           <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">{formatNumber(data.mau)}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Total deduplicated MAU for games matching this segment
@@ -563,7 +563,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
         {/* Device ownership */}
         <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">
-            Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on GHT survey data. Players may own multiple devices." />
+            Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on survey data. Players may own multiple devices." />
           </div>
           <div className="space-y-3">
             {data.devices.map((d, i) => (
@@ -586,7 +586,7 @@ function DemographicSection({ segId, segColor }: { segId: string; segColor: stri
         {/* Region distribution */}
         <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
           <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">
-            Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on GHT survey data and GPME geo-IP data." />
+            Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on survey data and geo-IP data." />
           </div>
           <div className="space-y-3">
             {data.regions.map((r) => (
@@ -868,7 +868,7 @@ function RegionSubTab({ segId, segColor }: { segId: string; segColor: string }) 
       <div className="bg-white rounded-card border border-nz-border p-5 shadow-card mb-5">
         <h3 className="text-sm font-semibold text-nz-text mb-4 flex items-center">
           Top Markets by Monthly Active Users
-          <InfoTooltip text="Regions ranked by the number of monthly active users within this segment's addressable market. Powered by GPME regional data. Use this to prioritise which markets to activate first in your media plan." />
+          <InfoTooltip text="Regions ranked by the number of monthly active users within this segment's addressable market. Powered by regional data. Use this to prioritise which markets to activate first in your media plan." />
         </h3>
         <table className="w-full text-sm">
           <thead>
@@ -1169,7 +1169,7 @@ function GeneratedBehavioralSection({
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* MAU Card */}
         <div className="bg-white rounded-card border border-nz-border p-4 shadow-card">
-          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by GPME individual user data." /></div>
+          <div className="text-xs text-nz-text-muted mb-1 flex items-center">Monthly Active Users<InfoTooltip text="Total de-duplicated MAU for games matching this segment's behavioral rules. Powered by individual user data." /></div>
           <div className="text-2xl font-mono font-semibold tabular-nums text-nz-text">{formatNumber(profile.mau)}</div>
           <div className="text-[10px] text-nz-text-muted mt-0.5 mb-2">
             Total deduplicated MAU for games matching this segment
@@ -1288,7 +1288,7 @@ function GeneratedDemographicSection({
       <div className="grid grid-cols-2 gap-5 mb-6">
         {/* Age */}
         <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Age Distribution<InfoTooltip text="Lifetime age breakdown of players in this segment based on GHT survey data. Does not change by month." /></div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Age Distribution<InfoTooltip text="Lifetime age breakdown of players in this segment based on survey data. Does not change by month." /></div>
           <div className="flex items-end gap-2 h-32">
             {profile.age.map((a, i) => {
               const isDominant = a.pct === maxAgePct;
@@ -1304,7 +1304,7 @@ function GeneratedDemographicSection({
         </div>
         {/* Gender */}
         <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Gender Distribution<InfoTooltip text="Lifetime gender breakdown of players in this segment based on GHT survey data. Does not change by month." /></div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Gender Distribution<InfoTooltip text="Lifetime gender breakdown of players in this segment based on survey data. Does not change by month." /></div>
           <div className="flex items-center gap-5">
             <DonutChart data={profile.gender} colors={GENDER_COLORS} />
             <div className="space-y-2">
@@ -1320,7 +1320,7 @@ function GeneratedDemographicSection({
         </div>
         {/* Devices */}
         <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on GHT survey data. Players may own multiple devices." /></div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Device Ownership<InfoTooltip text="Share of players in this segment who own each device type (PC, Console, Mobile, etc.). Based on survey data. Players may own multiple devices." /></div>
           <div className="space-y-3">
             {profile.devices.map((d, i) => (
               <div key={d.device}>
@@ -1337,7 +1337,7 @@ function GeneratedDemographicSection({
         </div>
         {/* Regions */}
         <div className="bg-white rounded-card border border-nz-border p-5 shadow-card">
-          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on GHT survey data and GPME geo-IP data." /></div>
+          <div className="text-xs font-semibold text-nz-text-muted uppercase tracking-wider mb-4 flex items-center">Region Distribution<InfoTooltip text="Geographic distribution of players in this segment by region. Based on survey data and geo-IP data." /></div>
           <div className="space-y-3">
             {profile.regions.map((r) => (
               <div key={r.region}>

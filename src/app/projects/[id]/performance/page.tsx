@@ -677,7 +677,7 @@ export default function PerformancePage() {
                 {isLaunched ? (
                   <>
                     <span className="font-semibold">Trajectory Validation Mode (Premium / P2P):</span>{" "}
-                    GPME measures market-level engagement &mdash; trajectory shape is the signal, not absolute numbers.
+                    Engagement data measures market-level engagement &mdash; trajectory shape is the signal, not absolute numbers.
                   </>
                 ) : (
                   <>

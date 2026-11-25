@@ -906,7 +906,7 @@ const V2_PLUS_HERO: Record<string, { title: string; subtitle: string; body: stri
   v2: {
     title: "Multi-Segment Analysis",
     subtitle: "Find and prioritize your highest-value player segments",
-    body: "Build multi-segment projects and compare audience potential across your game\u2019s lifecycle stages. Layer GPME behavioral data to understand who your players are and where the biggest conversion opportunities lie.",
+    body: "Build multi-segment projects and compare audience potential across your game\u2019s lifecycle stages. Layer behavioral data to understand who your players are and where the biggest conversion opportunities lie.",
     unlock: "Unlocks: compare multiple segments side by side with conversion rate data",
     chips: ["Multi-segment", "Conversion rate", "Audience overlap", "Project model"],
   },
@@ -920,16 +920,16 @@ const V2_PLUS_HERO: Record<string, { title: string; subtitle: string; body: stri
   v4: {
     title: "Audience Intelligence",
     subtitle: "From segment discovery to campaign execution",
-    body: "The complete audience intelligence suite. Connect segment insights to Data Fusion and GPMR signals, export campaign briefs, and build a full go-to-market strategy grounded in player behavior data.",
-    unlock: "Unlocks: export campaign briefs and connect to Data Fusion + GPMR",
-    chips: ["Multi-segment", "Data Fusion", "Campaign brief", "Export"],
+    body: "The complete audience intelligence suite. Connect segment insights to combined data and performance signals, export campaign briefs, and build a full go-to-market strategy grounded in player behavior data.",
+    unlock: "Unlocks: export campaign briefs and connect to combined data + performance signals",
+    chips: ["Multi-segment", "Data Integration", "Campaign brief", "Export"],
   },
   v5: {
     title: "AI-Powered Audience Intelligence",
     subtitle: "Describe your player. We\u2019ll build the strategy.",
-    body: "The full platform plus AI-assisted segment building. Describe your ideal player in plain language and let the system define the segments, surface the insights, and recommend the strategy \u2014 powered by GPMR, GGS, and Data Fusion.",
+    body: "The full platform plus AI-assisted segment building. Describe your ideal player in plain language and let the system define the segments, surface the insights, and recommend the strategy \u2014 powered by performance, survey and combined data.",
     unlock: "Unlocks: AI segment building from natural language \u2014 no manual rules needed",
-    chips: ["AI segment building", "Full Data Fusion", "Campaign brief", "Full automation"],
+    chips: ["AI segment building", "Full Data Integration", "Campaign brief", "Full automation"],
   },
 };
 

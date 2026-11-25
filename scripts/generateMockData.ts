@@ -65,7 +65,7 @@ OVERLAP MATRIX (must sum to ~820000 totalTrackedUsers):
 - "2 Segments": userCount ~35000, conversionRate 5-9
 - "All 3 Segments": userCount ~5000, conversionRate 10-16
 
-GHT ENRICHMENT per segment:
+SURVEY ENRICHMENT per segment:
 - age buckets: 18-24, 25-34, 35-44, 45+ (must sum to 100)
 - gender: Male, Female, Other (must sum to 100)
   - Seg1 (Simulation RPG): skews older male (75-82% male, older age)
@@ -116,7 +116,7 @@ Return this exact JSON structure:
 
   // --- Normalize Claude's output to match expected schema ---
 
-  // Normalize GHT enrichment: convert object format to array format
+  // Normalize survey enrichment: convert object format to array format
   function normalizeGht(ght: any) {
     const normalized: Record<string, any> = {};
     for (const segId of ["seg1", "seg2", "seg3"]) {

@@ -346,7 +346,7 @@ function ComparableTitlesModal({
           </table>
         </div>
         <div className="px-5 py-3 border-t border-[#E5E7EB] text-[10px] text-[#6B7280]">
-          Similarity calculated from genre, mechanics, theme overlap, and behavioral profile match via Naz GPME data.
+          Similarity calculated from genre, mechanics, theme overlap, and behavioral profile match.
         </div>
       </div>
     </div>
@@ -1342,7 +1342,7 @@ export default function AudiencePage() {
               <div className="text-xs font-body font-medium uppercase tracking-wider text-nz-text-secondary mb-1 flex items-center justify-end gap-1">
                 <MetricTooltip
                   label="Total Tracked Users"
-                  definition="Total players in Naz's GPME panel for the selected markets."
+                  definition="Total players in the panel for the selected markets."
                   whyItMatters="The pool your segments were drawn from. Context for understanding market share."
                 />
               </div>
@@ -1619,7 +1619,7 @@ export default function AudiencePage() {
                               <span className="text-nz-text-secondary">
                                 <MetricTooltip
                                   label="Benchmark Conv. Rate"
-                                  definition="The median conversion rate achieved by segments with a similar behavioral profile across comparable launched titles in Naz's GPME catalog."
+                                  definition="The median conversion rate achieved by segments with a similar behavioral profile across comparable launched titles in the catalog."
                                   formula={"Benchmark = median(conv rates of this segment profile across N comparable titles)\nLow = 25th percentile of comparable titles\nHigh = 75th percentile"}
                                   whyItMatters="Your best external reference for expected performance. Higher benchmark = similar audiences have historically responded well to titles like yours. Use the range to build optimistic and conservative launch forecasts."
                                 />
@@ -1683,7 +1683,7 @@ export default function AudiencePage() {
                               <span className="text-nz-text-secondary">
                                 <MetricTooltip
                                   label="Predicted Adopters"
-                                  definition="Estimated players likely to buy or download your title at launch, based on how similar segments performed for comparable titles in Naz's GPME catalog."
+                                  definition="Estimated players likely to buy or download your title at launch, based on how similar segments performed for comparable titles in the catalog."
                                   formula={`Predicted Adopters = Addressable x Benchmark Conv. Rate (mid)\ne.g. ${formatNumber(seg.addressableMarket)} x ${seg.benchmarkConvMid}% = ~${formatNumber(predictedAdoptersMid)}\nRange = Addressable x conv low to conv high`}
                                   whyItMatters="Use to forecast Day 1 sales and set realistic launch targets. Compare segments to decide where to focus pre-launch marketing spend."
                                   caveat="Model-based estimate. Actual results depend on marketing execution, pricing, and timing."
@@ -1698,7 +1698,7 @@ export default function AudiencePage() {
                               <span className="text-nz-text-secondary">
                                 <MetricTooltip
                                   label="Benchmark Conv. Rate"
-                                  definition="The median conversion rate achieved by segments with a similar behavioral profile across comparable launched titles in Naz's GPME catalog."
+                                  definition="The median conversion rate achieved by segments with a similar behavioral profile across comparable launched titles in the catalog."
                                   formula={"Benchmark = median(conv rates of this segment profile across N comparable titles)\nLow = 25th percentile of comparable titles\nHigh = 75th percentile"}
                                   whyItMatters="Your best external reference for expected performance. Higher benchmark = similar audiences have historically responded well to titles like yours. Use the range to build optimistic and conservative launch forecasts."
                                 />
@@ -1752,8 +1752,8 @@ export default function AudiencePage() {
                           <span className="text-nz-text-secondary">
                             <MetricTooltip
                               label="Actual Adopters"
-                              definition="Real players from this segment who have played your title since launch, from Naz's GPME play-history data."
-                              formula="Actual Adopters = players in segment present in your title's GPME play-history"
+                              definition="Real players from this segment who have played your title since launch, from the play-history data."
+                              formula="Actual Adopters = players in segment present in your title's play-history"
                               whyItMatters="Your ground truth. Compare to your pre-launch Predicted Adopters to evaluate forecast accuracy and refine your segment model for future titles."
                             />
                           </span>

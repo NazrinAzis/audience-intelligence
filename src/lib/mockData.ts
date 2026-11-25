@@ -150,7 +150,7 @@ export const avgPlaytimePerSegment = [
   { segmentId: "seg3", segmentName: "Historical Explorers", avgHours: 204, primaryTitle: "Anno 1800", color: "#F6A623" },
 ];
 
-// ─── GHT Enrichment per segment ───
+// ─── Survey Enrichment per segment ───
 export const ghtEnrichment: Record<string, {
   age: { bucket: string; pct: number }[];
   gender: { label: string; pct: number }[];

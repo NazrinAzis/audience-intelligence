@@ -318,7 +318,7 @@ export const PLAYER_NUMBER = [
 ] as const;
 
 // ─── Naz Motivational Gamer Personas ───
-// Source: Naz Persona Handbook (Global Gamer Study 2025)
+// Source: Naz Persona Handbook (Gamer Survey 2025)
 export const PERSONAS = [
   "Builders, Farmers, & Nurturers",
   "Competition Lovers",
