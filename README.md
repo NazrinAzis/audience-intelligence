@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Audience Intelligence
 
-## Getting Started
+A prototype platform for game publishers and marketers to **build player segments, profile who those players are, and estimate how a game will land with them**. It goes from "who should we target?" to a go-to-market view in one flow.
 
-First, run the development server:
+> This is a product prototype that runs on generated mock data. It is not connected to any production data source.
+
+## What it does
+
+- **Segment builder**: define player segments with behavioral rules (genres played, engagement, spend) in a query-builder UI.
+- **AI-assisted segmentation**: describe your ideal player in plain language and Claude turns it into segment rules.
+- **Segment profile**: demographics, device ownership, regional distribution and psychographic personas for each segment.
+- **Audience view**: compare titles, find the addressable market by region, and estimate launch adopters and conversion from similar segments.
+- **Performance tracking**: follow a title after launch and check its trajectory against benchmarks.
+- **Tiered versions**: a version switcher shows how features unlock across product tiers.
+
+## Tech stack
+
+- [Next.js](https://nextjs.org) (App Router) + React + TypeScript
+- Tailwind CSS
+- [Recharts](https://recharts.org) for charts
+- [Zustand](https://github.com/pmndrs/zustand) for state
+- [Anthropic Claude API](https://docs.claude.com) for the AI features (`src/app/api/*`)
+- Deployed on [Railway](https://railway.app)
+
+## Getting started
 
 ```bash
+npm install
+# create .env.local with the variables below
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+| --- | --- |
+| `ANTHROPIC_API_KEY` | Powers AI segment building, profile generation and chat |
 
-## Learn More
+### Regenerating mock data
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx tsx scripts/generateMockData.ts
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/app/dashboard        Segment list and product tiers
+src/app/projects/[id]    Segment, profile, audience and performance pages
+src/app/api              AI endpoints (segments, profiles, chat, benchmarks)
+src/lib                  Mock data, taxonomy and helpers
+design-reference         Static HTML design references
+```
 
-## Deploy on Vercel
+## Author
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by [Nazrin Qayyum Azis](https://www.linkedin.com/in/nazrinqayyum), a product manager in Amsterdam.
